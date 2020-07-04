@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:locall/containers/title_text.dart';
 import 'package:locall/screens/categories_screen.dart';
 import 'package:locall/screens/products_screen.dart';
+import 'package:locall/storage.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -37,6 +39,21 @@ class _BottomNavBarState extends State<BottomNavBar>
       });
     });
     super.initState();
+    getCart();
+  }
+
+  getCart() async {
+    await Firestore.instance
+        .collection('users')
+        .document('sumanth')
+        .collection('grocery_cart')
+        .snapshots()
+        .listen((value) {
+      setState(() {
+        Storage.cart = value.documents;
+//        print(Storage.cart[0]['a']);
+      });
+    });
   }
 
   @override

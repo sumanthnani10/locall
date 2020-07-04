@@ -1,5 +1,7 @@
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:locall/storage.dart';
 
 class Product extends StatefulWidget {
   var product;
@@ -145,7 +147,21 @@ class _ProductState extends State<Product> {
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8)),
                                     color: Color(0xffa6e553),
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      await Firestore.instance
+                                          .collection('users')
+                                          .document('sumanth')
+                                          .collection('grocery_cart')
+                                          .document(
+                                              widget.product['product_id'])
+                                          .setData({
+                                        'product_id':
+                                            widget.product['product_id'],
+                                        'price_num': index + 1,
+                                        'quantity': 1,
+                                      });
+                                      print('added to cart');
+                                    },
                                     icon: Icon(
                                       Icons.shopping_basket,
                                       size: 16,
@@ -154,7 +170,10 @@ class _ProductState extends State<Product> {
                                       'Add to cart',
                                       style: TextStyle(fontSize: 12),
                                     )),
-                              if (false)
+                              if (Storage.cart.contains({
+                                'product_id': widget.product['product_id'],
+                                'price_num': index + 1,
+                              }))
                                 Row(
                                   children: <Widget>[
                                     InkWell(
