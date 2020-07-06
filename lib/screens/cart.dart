@@ -1,19 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:locall/containers/title_text.dart';
+import 'package:locall/storage.dart';
 
 class Cart extends StatefulWidget {
-  var cart;
-
-  Cart({this.cart});
-
   @override
   _CartState createState() => _CartState();
 }
 
 class _CartState extends State<Cart> {
+  Map<String, dynamic> products = new Map<String, dynamic>();
+  List<int> tl = new List<int>();
+  List<int> ml = new List<int>();
+  int total = 0, mrp = 0;
+
   @override
   Widget build(BuildContext context) {
+    tl.length = 0;
+    ml.length = 0;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(80),
@@ -42,182 +47,254 @@ class _CartState extends State<Cart> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            //TODO: change this to List.generate
-            children: <Widget>[
-              Container(
-                padding: const EdgeInsets.all(4),
-                constraints: BoxConstraints(maxWidth: 400, maxHeight: 98),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        widget.cart['image'],
-                        fit: BoxFit.cover,
-                        width: 100,
-                        height: 90,
+          child: Storage.cart.length != 0
+              ? Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: List.generate(Storage.cart.length, (i) {
+                var t;
+                String id = '${Storage.cart[i].documentID}';
+                int pn = Storage.cart[i]['price_num'];
+                if ((t = Storage.products.singleWhere((element) {
+                  return element.documentID ==
+                      Storage.cart[i]['product_id'];
+                }, orElse: () {
+                  return null;
+                })) !=
+                    null) {
+                  products[id] = t.data;
+                  products[id].addAll(Storage.cart[i].data);
+                  if (tl.length > i) {
+                    tl[i] = (products[id]['price_${pn}'] *
+                        products[id]['quantity']);
+                    ml[i] = (products[id]['mrp_${pn}'] *
+                        products[id]['quantity']);
+                  } else {
+                    tl.add(products[id]['price_${pn}'] *
+                        products[id]['quantity']);
+                    ml.add(products[id]['mrp_${pn}'] *
+                        products[id]['quantity']);
+                  }
+                  mrp = ml.fold(0, (p, c) => p + c);
+                  total = tl.fold(0, (p, c) => p + c);
+                }
+                return Container(
+                  padding: const EdgeInsets.all(4),
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  constraints: BoxConstraints(maxWidth: 400, maxHeight: 98),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          products[id]['image'],
+                          fit: BoxFit.cover,
+                          width: 100,
+                          height: 90,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 4,
-                    ),
-                    Container(
-                      width: 200,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.max,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            widget.cart['name'],
-                            maxLines: 1,
-                            softWrap: true,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Text(
-                            widget.cart['category'],
-                            overflow: TextOverflow.ellipsis,
-                            style:
-                                TextStyle(fontSize: 10, color: Colors.black54),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                widget.cart['quantity_1'].toString() != '0'
-                                    ? 'Rs.${widget.cart['price_1']}/${widget.cart['quantity_1']}${widget.cart['unit_1']}'
-                                    : 'Rs.${widget.cart['price_1']}',
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.black),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              if (widget.cart['price_1'] !=
-                                  widget.cart['mrp_1'])
-                                Row(
-                                  children: <Widget>[
-                                    SizedBox(
-                                      width: 4,
-                                    ),
-                                    Text(
-                                      'Rs.${widget.cart['mrp_1']}',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.red,
-                                          decoration:
-                                              TextDecoration.lineThrough,
-                                          decorationColor: Colors.black),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                    SizedBox(
-                                      width: 4,
-                                    ),
-                                    Text(
-                                      '(${((widget.cart['mrp_1'] - widget.cart['price_1']) / widget.cart['mrp_1'] * 100).round()}%)',
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.w600),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                    ),
-                                  ],
-                                )
-                            ],
-                          ),
-                          Spacer(),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              RupeeText(
-                                amount: 2500,
-                                size: 18,
-                                color: Colors.green[800],
-                              ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              //TODO: add if mrp is diff
-                              Text(
-                                '2750',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.red,
-                                  decoration: TextDecoration.lineThrough,
+                      SizedBox(
+                        width: 4,
+                      ),
+                      Container(
+                        width: 200,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              products[id]['name'],
+                              maxLines: 1,
+                              softWrap: true,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Text(
+                              products[id]['category'],
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: 10, color: Colors.black54),
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  products[id]['quantity_${pn}']
+                                      .toString() !=
+                                      '0'
+                                      ? 'Rs.${products[id]['price_${pn}']}/${products[id]['quantity_${pn}']}${products[id]['unit_${pn}']}'
+                                      : 'Rs.${products[id]['price_${pn}']}',
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.black),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
-                              )
-                            ],
+                                if (products[id]['price_${pn}'] !=
+                                    products[id]['mrp_${pn}'])
+                                  Row(
+                                    children: <Widget>[
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      Text(
+                                        'Rs.${products[id]['mrp_${pn}']}',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.red,
+                                            decoration:
+                                            TextDecoration.lineThrough,
+                                            decorationColor: Colors.black),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      Text(
+                                        '(${((products[id]['mrp_${pn}'] -
+                                            products[id]['price_${pn}']) /
+                                            products[id]['mrp_${pn}'] * 100)
+                                            .round()}%)',
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.w600),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ],
+                                  )
+                              ],
+                            ),
+                            Spacer(),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                RupeeText(
+                                  amount: products[id]['price_${pn}'] *
+                                      Storage.cart[i]['quantity'],
+                                  size: 18,
+                                  color: Colors.green[800],
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  (products[id]['mrp_${pn}'] *
+                                      Storage.cart[i]['quantity'])
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.red,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Spacer(),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          InkWell(
+                            onTap: () async {
+                              products[id]['quantity']++;
+                              setState(() {});
+                              await Firestore.instance
+                                  .collection('users')
+                                  .document('sumanth')
+                                  .collection('grocery_cart')
+                                  .document(Storage.cart[i].documentID)
+                                  .updateData({
+                                'quantity': Storage.cart[i]['quantity'] + 1,
+                              });
+                              setState(() {});
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(color: Colors.black)),
+                              child: Icon(
+                                Icons.add,
+                                color: Colors.green,
+                                size: 24,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            Storage.cart[i]['quantity'].toString(),
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              if (Storage.cart[i]['quantity'] > 1) {
+                                products[id]['quantity']--;
+                                setState(() {});
+                                await Firestore.instance
+                                    .collection('users')
+                                    .document('sumanth')
+                                    .collection('grocery_cart')
+                                    .document(Storage.cart[i].documentID)
+                                    .updateData({
+                                  'quantity':
+                                  Storage.cart[i]['quantity'] - 1,
+                                });
+                              } else {
+                                products[id] = null;
+                                setState(() {});
+                                await Firestore.instance
+                                    .collection('users')
+                                    .document('sumanth')
+                                    .collection('grocery_cart')
+                                    .document(Storage.cart[i].documentID)
+                                    .delete();
+                              }
+                              setState(() {});
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(color: Colors.black)),
+                              child: Icon(
+                                Icons.remove,
+                                color: Colors.green,
+                                size: 24,
+                              ),
+                            ),
                           ),
                         ],
-                      ),
-                    ),
-                    Spacer(),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        InkWell(
-                          onTap: () {},
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: Colors.black)),
-                            child: Icon(
-                              Icons.add,
-                              color: Colors.green,
-                              size: 24,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          '1',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        InkWell(
-                          onTap: () {},
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: Colors.black)),
-                            child: Icon(
-                              Icons.remove,
-                              color: Colors.green,
-                              size: 24,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
+                      )
+                    ],
+                  ),
+                );
+              }).toList())
+              : Text('Add products to your cart.'),
         ),
       ),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: Storage.cart.length != 0
+          ? Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(12), topRight: Radius.circular(12))),
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12))),
         child: Row(
           children: <Widget>[
             Column(
@@ -227,7 +304,7 @@ class _CartState extends State<Cart> {
                   children: <Widget>[
                     Text('Total:  '),
                     RupeeText(
-                      amount: 2500,
+                      amount: total,
                       color: Colors.green,
                       fontWeight: FontWeight.w800,
                       size: 24,
@@ -237,14 +314,18 @@ class _CartState extends State<Cart> {
                 Row(
                   children: <Widget>[
                     Text(
-                      '2750',
+                      mrp.toString(),
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.red,
                         decoration: TextDecoration.lineThrough,
                       ),
                     ),
-                    Text(' (You Save: 9%)',
+                    Text(
+                        mrp != 0
+                            ? ' (You Save: ${(((mrp - total) / mrp) * 100)
+                            .round()}%)'
+                            : '',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.green,
@@ -255,7 +336,8 @@ class _CartState extends State<Cart> {
             ),
             Spacer(),
             RaisedButton.icon(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 8, vertical: 8),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)),
                 color: Colors.greenAccent,
@@ -270,6 +352,9 @@ class _CartState extends State<Cart> {
                 ))
           ],
         ),
+      )
+          : Container(
+        height: 48,
       ),
       backgroundColor: Color(0xffa6e553),
     );
@@ -283,12 +368,11 @@ class RupeeText extends StatelessWidget {
   FontWeight fontWeight = FontWeight.normal;
   TextDecoration textDecoration = TextDecoration.none;
 
-  RupeeText(
-      {this.amount,
-      this.color,
-      this.size,
-      this.fontWeight,
-      this.textDecoration});
+  RupeeText({this.amount,
+    this.color,
+    this.size,
+    this.fontWeight,
+    this.textDecoration});
 
   @override
   Widget build(BuildContext context) {

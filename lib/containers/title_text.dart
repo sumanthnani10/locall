@@ -43,9 +43,7 @@ class TitleText extends StatelessWidget {
                   FlatButton.icon(
                     onPressed: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => Cart(
-                          cart: Storage.products[0],
-                        ),
+                        builder: (context) => Cart(),
                       ));
                     },
                     splashColor: Color(0x66a6e553),

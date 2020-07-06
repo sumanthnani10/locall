@@ -51,7 +51,6 @@ class _BottomNavBarState extends State<BottomNavBar>
         .listen((value) {
       setState(() {
         Storage.cart = value.documents;
-//        print(Storage.cart[0]['a']);
       });
     });
   }
