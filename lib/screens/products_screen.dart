@@ -55,7 +55,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                   }
                   if (a['creation'] == null) return -1;
                   if (b['creation'] == null) return 1;*/
-                  if (a['creation'].toDate().isBefore(b['creation'].toDate()))
+                  if (b['creation'].toDate().isBefore(a['creation'].toDate()))
                     return -1;
                   else
                     return 1;

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:locall/screens/product_view_screen.dart';
+import 'package:locall/storage.dart';
 
 class ProductItem extends StatefulWidget {
   var snap;
@@ -301,7 +302,8 @@ class _ProductItemState extends State<ProductItem>
             ),
           ),
           Spacer(),
-          if (widget.snap['stock'])
+          if (widget.snap['stock'] &&
+              !Storage.cart_products_id.contains(widget.snap['product_id']))
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: RaisedButton.icon(
@@ -313,6 +315,115 @@ class _ProductItemState extends State<ProductItem>
                   onPressed: () {},
                   icon: Icon(Icons.shopping_basket),
                   label: Text('Add to cart')),
+            ),
+          if (widget.snap['stock'] &&
+              Storage.cart_products_id.contains(widget.snap['product_id']) &&
+              widget.snap['prices'] != 1)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: RaisedButton.icon(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(8),
+                          bottomRight: Radius.circular(8)),
+                      side: BorderSide(color: Colors.black)),
+                  color: Colors.white,
+                  onPressed: () {},
+                  icon: Icon(Icons.shopping_basket),
+                  label: Text(
+                    'Added to cart',
+                    style: TextStyle(fontSize: 12),
+                  )),
+            ),
+          if (widget.snap['stock'] &&
+              Storage.cart_products_id.contains(widget.snap['product_id']) &&
+              widget.snap['prices'] == 1)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  InkWell(
+                    onTap: () async {
+                      /*
+                      if (Storage.cart[
+                      '${widget.product['product_id']}_price${index + 1}']
+                      ['quantity'] !=
+                          1) {
+                        await Firestore.instance
+                            .collection('users')
+                            .document('sumanth')
+                            .collection('grocery_cart')
+                            .document(
+                            '${widget.snap['product_id']}_price1}')
+                            .updateData({
+                          'quantity': variants[
+                          '${widget.snap['product_id']}_price1']
+                          ['quantity'] -
+                              1,
+                        });
+                      } else {
+                        await Firestore.instance
+                            .collection('users')
+                            .document('sumanth')
+                            .collection('grocery_cart')
+                            .document(
+                            '${widget.product['product_id']}_price${index + 1}')
+                            .delete();
+                      }
+                      setState(() {});*/
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Colors.black)),
+                      child: Icon(
+                        Icons.remove,
+                        color: Colors.blue,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '1'
+                    /*variants['${widget.product['product_id']}_price${index + 1}']
+                            ['quantity']
+                        .toString()*/
+                    ,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      /*
+                      await Firestore.instance
+                          .collection('users')
+                          .document('sumanth')
+                          .collection('grocery_cart')
+                          .document(
+                          '${widget.product['product_id']}_price${index + 1}')
+                          .updateData({
+                        'quantity': variants[
+                        '${widget.product['product_id']}_price${index + 1}']
+                        ['quantity'] +
+                            1,
+                      });
+                      setState(() {});*/
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Colors.black)),
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.blue,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           if (!widget.snap['stock'])
             Padding(
@@ -336,7 +447,7 @@ class _ProductItemState extends State<ProductItem>
       return InkWell(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Product(product: widget.snap),
+            builder: (context) => Product(product: widget.snap.data),
           ));
         },
         child: ScaleTransition(

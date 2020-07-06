@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:locall/storage.dart';
 
 class Product extends StatefulWidget {
-  var product;
+  Map<String, dynamic> product;
 
   Product({@required this.product});
 
@@ -123,13 +123,10 @@ class _ProductState extends State<Product> {
                             children: <Widget>[
                               Text(
                                 widget.product['quantity_${index + 1}']
-                                    .toString() !=
-                                    '0'
-                                    ? 'Rs.${widget.product['price_${index +
-                                    1}']} - ${widget.product['quantity_${index +
-                                    1}']}${widget.product['unit_${index + 1}']}'
-                                    : 'Rs.${widget.product['price_${index +
-                                    1}']}',
+                                            .toString() !=
+                                        '0'
+                                    ? 'Rs.${widget.product['price_${index + 1}']} - ${widget.product['quantity_${index + 1}']}${widget.product['unit_${index + 1}']}'
+                                    : 'Rs.${widget.product['price_${index + 1}']}',
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.black),
                                 overflow: TextOverflow.ellipsis,
@@ -333,22 +330,22 @@ class _ProductState extends State<Product> {
                           ),
                         );
                           }).toList(),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Text(
-                          'Description :',
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                        ),
-                        Text(
-                          widget.product['description'] == ''
-                              ? '    No description'
-                              : '    ' + widget.product['description'],
-                          style: TextStyle(fontSize: 14, color: Colors.black),
-                        ),
-                      ],
                     ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Text(
+                      'Description :',
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ),
+                    Text(
+                      widget.product['description'] == ''
+                          ? '    No description'
+                          : '    ' + widget.product['description'],
+                      style: TextStyle(fontSize: 14, color: Colors.black),
+                    ),
+                  ],
+                ),
                   ))
             ],
           ),

@@ -51,6 +51,10 @@ class _BottomNavBarState extends State<BottomNavBar>
         .listen((value) {
       setState(() {
         Storage.cart = value.documents;
+        Storage.cart_products_id.length = 0;
+        Storage.cart.forEach((element) {
+          Storage.cart_products_id.add(element['product_id']);
+        });
       });
     });
   }

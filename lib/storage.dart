@@ -4,4 +4,5 @@ import 'package:flutter/cupertino.dart';
 class Storage {
   static List<DocumentSnapshot> products;
   static List<DocumentSnapshot> cart;
+  static List<String> cart_products_id = new List();
 }
