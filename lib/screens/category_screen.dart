@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locall/containers/focused_menu.dart';
 import 'package:locall/containers/product_item.dart';
 
 import 'bottom_nav.dart';
@@ -76,9 +77,13 @@ class _CategoryScreenState extends State<CategoryScreen>
                         shrinkWrap: true,
                         childAspectRatio: 0.72,
                         children: List.generate(visproducts.length, (index) {
-                          return ProductItem(
+                          /*return ProductItem(
                             snap: visproducts[index],
                             hw: false,
+                          );*/
+                          return ProductCard(
+                            hw: false,
+                            snap: visproducts[index],
                           );
                         }),
                       );

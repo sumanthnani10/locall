@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:locall/containers/focused_menu.dart';
 import 'package:locall/containers/product_item.dart';
 import 'package:locall/containers/title_text.dart';
 import 'package:locall/screens/category_screen.dart';
@@ -13,19 +14,27 @@ class _ProductsScreenState extends State<ProductsScreen>
     with AutomaticKeepAliveClientMixin {
   List<String> categories = [
     'New Arrivals',
-    'Dry Fruits & Masala',
-    'Dals & Pulses',
-    'Rice & Rice Products',
     'Atta & Flour',
-    'Salt & Sugar',
-    'Snacks & Food',
-    'Soaps & Shampoo',
-    'Cleaners',
-    'Hair Oils',
+    'Beverages',
     'Body Sprays',
     'Chocolates',
+    'Cleaners',
+    'Dals & Pulses',
+    'Diary',
+    'Dry Fruits',
+    'Edible Oils',
+    'Hair Oils',
+    'Masala',
+    'Patanjali',
     'Personal Hygiene',
-    'Agarbathhi',
+    'Pooja Products',
+    'Rice & Rice Products',
+    'Salt, Sugar & Tea',
+    'Snacks and Food',
+    'Soaps and Shampoo',
+    'Spices',
+    'Stationary',
+    'Vegetables',
     'Others',
   ];
 
@@ -42,105 +51,112 @@ class _ProductsScreenState extends State<ProductsScreen>
       color: Color(0xffa6e553),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(categories.length, (i) {
-              if (categories[i] == categories[0]) {
-                t = Storage.products;
-                t.sort((a, b) {
-                  /*if (a['creation'] == null) {
+        child: Storage.cart == null
+            ? LinearProgressIndicator()
+            : SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: List.generate(categories.length, (i) {
+                    if (categories[i] == categories[0]) {
+                      t = Storage.products;
+                      t.sort((a, b) {
+                        /*if (a['creation'] == null) {
                     print(a['name']);
                   }
                   if (a['creation'] == null) return -1;
                   if (b['creation'] == null) return 1;*/
-                  if (b['creation'].toDate().isBefore(a['creation'].toDate()))
-                    return -1;
-                  else
-                    return 1;
-                });
-              } else {
-                t = List.from(Storage.products.where((element) {
-                  return element['category'] == categories[i];
-                }));
-              }
-              if (t.length == 0) {
-                return Container();
-              } else {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        categories[i],
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: List<Widget>.generate(
-                                t.length < 5 ? t.length : 5, (index) {
-                              return ProductItem(
-                                snap: t[index],
-                                hw: true,
-                              );
-                            }).toList() +
-                            [
-                              if (categories[i] != categories[0])
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).push(createRoute(
-                                        CategoryScreen(categories[i], products:
-                                            List.from(Storage.products
-                                                .where((element) {
-                                      return element['category'] ==
-                                          categories[i];
-                                    })))));
-                                  },
-                                  child: Container(
-                                    width: 160,
-                                    height: 236,
-                                    child: Card(
-                                      elevation: 4,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            'More',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.indigo),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )
-                            ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 4,
-                    )
-                  ],
-                );
-              }
-            }).toList(),
-          ),
-        ),
+                        if (b['creation']
+                            .toDate()
+                            .isBefore(a['creation'].toDate()))
+                          return -1;
+                        else
+                          return 1;
+                      });
+                    } else {
+                      t = List.from(Storage.products.where((element) {
+                        return element['category'] == categories[i];
+                      }));
+                    }
+                    if (t.length == 0) {
+                      return Container();
+                    } else {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              categories[i],
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          SingleChildScrollView(
+                            physics: BouncingScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: List<Widget>.generate(
+                                      t.length < 5 ? t.length : 5, (index) {
+                                    return ProductCard(
+                                      snap: t[index],
+                                      hw: true,
+                                    );
+                                  }).toList() +
+                                  [
+                                    if (categories[i] != categories[0])
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                              createRoute(CategoryScreen(
+                                                  categories[i], products:
+                                                      List.from(Storage.products
+                                                          .where((element) {
+                                            return element['category'] ==
+                                                categories[i];
+                                          })))));
+                                        },
+                                        child: Container(
+                                          width: 160,
+                                          height: 236,
+                                          child: Card(
+                                            elevation: 4,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(
+                                                  'More',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.indigo),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                  ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          )
+                        ],
+                      );
+                    }
+                  }).toList(),
+                ),
+              ),
       ),
     );
   }

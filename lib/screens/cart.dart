@@ -373,11 +373,12 @@ class RupeeText extends StatelessWidget {
   FontWeight fontWeight = FontWeight.normal;
   TextDecoration textDecoration = TextDecoration.none;
 
-  RupeeText({this.amount,
-    this.color,
-    this.size,
-    this.fontWeight,
-    this.textDecoration});
+  RupeeText(
+      {this.amount,
+      this.color,
+      this.size,
+      this.fontWeight,
+      this.textDecoration});
 
   @override
   Widget build(BuildContext context) {

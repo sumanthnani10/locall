@@ -51,7 +51,9 @@ class TitleText extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16)),
                     icon: Icon(Icons.shopping_basket),
                     label: Text(
-                      'Cart',
+                      Storage.cart != null
+                          ? 'Cart (${Storage.cart.length})'
+                          : 'Cart',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 16,

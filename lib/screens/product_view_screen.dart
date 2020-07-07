@@ -140,13 +140,12 @@ class _ProductState extends State<Product> {
                                       width: 8,
                                     ),
                                     Text(
-                                      'Rs.${widget.product['mrp_${index +
-                                          1}']}',
+                                      'Rs.${widget.product['mrp_${index + 1}']}',
                                       style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.red,
                                           decoration:
-                                          TextDecoration.lineThrough,
+                                              TextDecoration.lineThrough,
                                           decorationColor: Colors.black),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,

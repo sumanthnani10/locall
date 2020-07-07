@@ -51,16 +51,16 @@ class _CategoryCardState extends State<CategoryCard>
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                width: 160,
-                height: 160,
-                padding: const EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.fromLTRB(2, 8, 2, 4),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      "assets/${widget.catName}.jpg",
-                      width: 90,
+                    AspectRatio(
+                      aspectRatio: 4 / 3,
+                      child: Image.asset(
+                        "assets/${widget.catName}.jpg",
+                      ),
                     ),
                     Text(
                       widget.catName,
