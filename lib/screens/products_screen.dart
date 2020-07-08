@@ -102,7 +102,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                               children: List<Widget>.generate(
                                       t.length < 5 ? t.length : 5, (index) {
                                     return ProductCard(
-                                      snap: t[index],
+                                      snap: t[index].data,
                                       hw: true,
                                     );
                                   }).toList() +

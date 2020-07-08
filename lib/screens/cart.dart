@@ -346,7 +346,38 @@ class _CartState extends State<Cart> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                       color: Colors.greenAccent,
-                      onPressed: () {},
+                      onPressed: () async {
+                        //TODO: change sumanth to dynamic
+
+                        List<Map<String, dynamic>> cart =
+                            new List<Map<String, dynamic>>();
+
+                        Storage.cart.forEach((element) {
+                          cart.add(element.data);
+                        });
+
+                        Map<String, dynamic> order = {
+                          'products': cart,
+                          'customer_id': 'sumanth',
+                          'total': total,
+                          'length': Storage.cart.length,
+                          'stage': 'order placed',
+                          'from': 'isnapur_grocery_sairam'
+                        };
+                        await Firestore.instance
+                            .collection('locations')
+                            .document('isnapur')
+                            .collection('groceries_orders')
+                            .add({}).then((value) async =>
+                                order['order_id'] = await value.documentID);
+                        await Firestore.instance
+                            .collection('locations')
+                            .document('isnapur')
+                            .collection('groceries_orders')
+                            .document(order['order_id'])
+                            .setData(order);
+                        print(order);
+                      },
                       icon: Icon(
                         Icons.done_all,
                         size: 24,

@@ -188,252 +188,21 @@ class _ProductCardState extends State<ProductCard>
                                 return FadeTransition(
                                     opacity: animation,
                                     child: FocusedMenuDetails(
+                                      snap: widget.snap,
                                       itemExtent: widget.menuItemExtent,
                                       menuBoxDecoration:
                                           widget.menuBoxDecoration,
                                       child: child,
                                       childOffset: childOffset,
                                       childSize: childSize,
-                                      menuItems: List.generate(
-                                          widget.snap['prices'], (index) {
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 4),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: <Widget>[
-                                              Text(
-                                                widget.snap['quantity_${index + 1}']
-                                                            .toString() !=
-                                                        '0'
-                                                    ? 'Rs.${widget.snap['price_${index + 1}']} - ${widget.snap['quantity_${index + 1}']}${widget.snap['unit_${index + 1}']}'
-                                                    : 'Rs.${widget.snap['price_${index + 1}']}',
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.black),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                              ),
-                                              if (widget.snap[
-                                                      'price_${index + 1}'] !=
-                                                  widget
-                                                      .snap['mrp_${index + 1}'])
-                                                Row(
-                                                  children: <Widget>[
-                                                    SizedBox(
-                                                      width: 4,
-                                                    ),
-                                                    Text(
-                                                      'Rs.${widget.snap['mrp_${index + 1}']}',
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: Colors.red,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .lineThrough,
-                                                          decorationColor:
-                                                              Colors.black),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                    ),
-                                                    SizedBox(
-                                                      width: 4,
-                                                    ),
-                                                    Text(
-                                                      '${((widget.snap['mrp_${index + 1}'] - widget.snap['price_${index + 1}']) / widget.snap['mrp_${index + 1}'] * 100).round()}%',
-                                                      style: TextStyle(
-                                                          fontSize: 11,
-                                                          color: Colors.green,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                    ),
-                                                  ],
-                                                ),
-                                              Spacer(),
-                                              if (widget.snap['stock'] &&
-                                                  variants[
-                                                          '${widget.snap['product_id']}_price${index + 1}'] ==
-                                                      null)
-                                                RaisedButton.icon(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8)),
-                                                    color: Color(0xffa6e553),
-                                                    onPressed: () async {
-                                                      await Firestore.instance
-                                                          .collection('users')
-                                                          .document('sumanth')
-                                                          .collection(
-                                                              'grocery_cart')
-                                                          .document(
-                                                              '${widget.snap['product_id']}_price${index + 1}')
-                                                          .setData({
-                                                        'product_id': widget
-                                                            .snap['product_id'],
-                                                        'price_num': index + 1,
-                                                        'quantity': 1,
-                                                      });
-                                                      setState(() {});
-                                                    },
-                                                    icon: Icon(
-                                                      Icons.shopping_basket,
-                                                      size: 16,
-                                                    ),
-                                                    label: Text(
-                                                      'Add to cart',
-                                                      style: TextStyle(
-                                                          fontSize: 12),
-                                                    )),
-                                              if (widget.snap['stock'] &&
-                                                  variants[
-                                                          '${widget.snap['product_id']}_price${index + 1}'] !=
-                                                      null)
-                                                Row(
-                                                  children: <Widget>[
-                                                    InkWell(
-                                                      onTap: () async {
-                                                        if (variants[
-                                                                    '${widget.snap['product_id']}_price${index + 1}']
-                                                                ['quantity'] !=
-                                                            1) {
-                                                          await Firestore
-                                                              .instance
-                                                              .collection(
-                                                                  'users')
-                                                              .document(
-                                                                  'sumanth')
-                                                              .collection(
-                                                                  'grocery_cart')
-                                                              .document(
-                                                                  '${widget.snap['product_id']}_price${index + 1}')
-                                                              .updateData({
-                                                            'quantity': variants[
-                                                                        '${widget.snap['product_id']}_price${index + 1}']
-                                                                    [
-                                                                    'quantity'] -
-                                                                1,
-                                                          });
-                                                        } else {
-                                                          await Firestore
-                                                              .instance
-                                                              .collection(
-                                                                  'users')
-                                                              .document(
-                                                                  'sumanth')
-                                                              .collection(
-                                                                  'grocery_cart')
-                                                              .document(
-                                                                  '${widget.snap['product_id']}_price${index + 1}')
-                                                              .delete();
-                                                        }
-                                                        setState(() {});
-                                                      },
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        4),
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .black)),
-                                                        child: Icon(
-                                                          Icons.remove,
-                                                          color: Colors.blue,
-                                                          size: 28,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 8,
-                                                    ),
-                                                    Text(
-                                                      variants['${widget.snap['product_id']}_price${index + 1}']
-                                                              ['quantity']
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          fontSize: 18),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 8,
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () async {
-                                                        await Firestore.instance
-                                                            .collection('users')
-                                                            .document('sumanth')
-                                                            .collection(
-                                                                'grocery_cart')
-                                                            .document(
-                                                                '${widget.snap['product_id']}_price${index + 1}')
-                                                            .updateData({
-                                                          'quantity': variants[
-                                                                      '${widget.snap['product_id']}_price${index + 1}']
-                                                                  ['quantity'] +
-                                                              1,
-                                                        });
-                                                        setState(() {});
-                                                      },
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        4),
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .black)),
-                                                        child: Icon(
-                                                          Icons.add,
-                                                          color: Colors.blue,
-                                                          size: 28,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              if (!widget.snap['stock'])
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(horizontal: 4),
-                                                  child: RaisedButton(
-                                                      shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          8),
-                                                                  bottomRight: Radius
-                                                                      .circular(
-                                                                          8))),
-                                                      onPressed: () {},
-                                                      child:
-                                                          Text('Out Of Stock')),
-                                                )
-                                            ],
-                                          ),
-                                        );
-                                      }).toList(),
                                       blurSize: widget.blurSize,
                                       menuWidth: widget.menuWidth,
                                       blurBackgroundColor:
                                           widget.blurBackgroundColor,
                                       animateMenu:
-                                          widget.animateMenuItems ?? true,
+                                      widget.animateMenuItems ?? true,
                                       bottomOffsetHeight:
-                                          widget.bottomOffsetHeight ?? 0,
+                                      widget.bottomOffsetHeight ?? 0,
                                       menuOffset: widget.menuOffset ?? 0,
                                     ));
                               },
@@ -482,258 +251,20 @@ class _ProductCardState extends State<ProductCard>
                               return FadeTransition(
                                   opacity: animation,
                                   child: FocusedMenuDetails(
+                                    snap: widget.snap,
                                     itemExtent: widget.menuItemExtent,
                                     menuBoxDecoration: widget.menuBoxDecoration,
                                     child: child,
                                     childOffset: childOffset,
                                     childSize: childSize,
-                                    menuItems: List.generate(
-                                        widget.snap['prices'], (index) {
-                                      var t;
-                                      if ((t = Storage.cart.singleWhere(
-                                              (element) {
-                                            return element.documentID ==
-                                                '${widget.snap['product_id']}_price${index + 1}';
-                                          }, orElse: () {
-                                            return null;
-                                          })) !=
-                                          null) {
-                                        variants[
-                                                '${widget.snap['product_id']}_price${index + 1}'] =
-                                            t.data;
-                                      } else {
-                                        variants[
-                                                '${widget.snap['product_id']}_price${index + 1}'] =
-                                            null;
-                                      }
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 4),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              widget.snap['quantity_${index + 1}']
-                                                          .toString() !=
-                                                      '0'
-                                                  ? 'Rs.${widget.snap['price_${index + 1}']} - ${widget.snap['quantity_${index + 1}']}${widget.snap['unit_${index + 1}']}'
-                                                  : 'Rs.${widget.snap['price_${index + 1}']}',
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.black),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                            ),
-                                            if (widget.snap[
-                                                    'price_${index + 1}'] !=
-                                                widget.snap['mrp_${index + 1}'])
-                                              Row(
-                                                children: <Widget>[
-                                                  SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  Text(
-                                                    'Rs.${widget.snap['mrp_${index + 1}']}',
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.red,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .lineThrough,
-                                                        decorationColor:
-                                                            Colors.black),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  Text(
-                                                    '${((widget.snap['mrp_${index + 1}'] - widget.snap['price_${index + 1}']) / widget.snap['mrp_${index + 1}'] * 100).round()}%',
-                                                    style: TextStyle(
-                                                        fontSize: 11,
-                                                        color: Colors.green,
-                                                        fontWeight:
-                                                            FontWeight.w600),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                  ),
-                                                ],
-                                              ),
-                                            Spacer(),
-                                            if (widget.snap['stock'] &&
-                                                variants[
-                                                        '${widget.snap['product_id']}_price${index + 1}'] ==
-                                                    null)
-                                              RaisedButton.icon(
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8)),
-                                                  color: Color(0xffa6e553),
-                                                  onPressed: () async {
-                                                    await Firestore.instance
-                                                        .collection('users')
-                                                        .document('sumanth')
-                                                        .collection(
-                                                            'grocery_cart')
-                                                        .document(
-                                                            '${widget.snap['product_id']}_price${index + 1}')
-                                                        .setData({
-                                                      'product_id': widget
-                                                          .snap['product_id'],
-                                                      'price_num': index + 1,
-                                                      'quantity': 1,
-                                                    });
-                                                    setState(() {});
-                                                  },
-                                                  icon: Icon(
-                                                    Icons.shopping_basket,
-                                                    size: 16,
-                                                  ),
-                                                  label: Text(
-                                                    'Add to cart',
-                                                    style:
-                                                        TextStyle(fontSize: 12),
-                                                  )),
-                                            if (widget.snap['stock'] &&
-                                                variants[
-                                                        '${widget.snap['product_id']}_price${index + 1}'] !=
-                                                    null)
-                                              Row(
-                                                children: <Widget>[
-                                                  InkWell(
-                                                    onTap: () async {
-                                                      if (variants[
-                                                                  '${widget.snap['product_id']}_price${index + 1}']
-                                                              ['quantity'] !=
-                                                          1) {
-                                                        await Firestore.instance
-                                                            .collection('users')
-                                                            .document('sumanth')
-                                                            .collection(
-                                                                'grocery_cart')
-                                                            .document(
-                                                                '${widget.snap['product_id']}_price${index + 1}')
-                                                            .updateData({
-                                                          'quantity': variants[
-                                                                      '${widget.snap['product_id']}_price${index + 1}']
-                                                                  ['quantity'] -
-                                                              1,
-                                                        });
-                                                      } else {
-                                                        await Firestore.instance
-                                                            .collection('users')
-                                                            .document('sumanth')
-                                                            .collection(
-                                                                'grocery_cart')
-                                                            .document(
-                                                                '${widget.snap['product_id']}_price${index + 1}')
-                                                            .delete();
-                                                      }
-                                                      setState(() {});
-                                                    },
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(4),
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .black)),
-                                                      child: Icon(
-                                                        Icons.remove,
-                                                        color: Colors.blue,
-                                                        size: 28,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  Text(
-                                                    variants['${widget.snap['product_id']}_price${index + 1}']
-                                                            ['quantity']
-                                                        .toString(),
-                                                    style:
-                                                        TextStyle(fontSize: 18),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  InkWell(
-                                                    onTap: () async {
-                                                      await Firestore.instance
-                                                          .collection('users')
-                                                          .document('sumanth')
-                                                          .collection(
-                                                              'grocery_cart')
-                                                          .document(
-                                                              '${widget.snap['product_id']}_price${index + 1}')
-                                                          .updateData({
-                                                        'quantity': variants[
-                                                                    '${widget.snap['product_id']}_price${index + 1}']
-                                                                ['quantity'] +
-                                                            1,
-                                                      });
-                                                      setState(() {});
-                                                    },
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(4),
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .black)),
-                                                      child: Icon(
-                                                        Icons.add,
-                                                        color: Colors.blue,
-                                                        size: 28,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            if (!widget.snap['stock'])
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 4),
-                                                child: RaisedButton(
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                        8),
-                                                                bottomRight:
-                                                                    Radius
-                                                                        .circular(
-                                                                            8))),
-                                                    onPressed: () {},
-                                                    child:
-                                                        Text('Out Of Stock')),
-                                              )
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
                                     blurSize: widget.blurSize,
                                     menuWidth: widget.menuWidth,
                                     blurBackgroundColor:
-                                        widget.blurBackgroundColor,
+                                    widget.blurBackgroundColor,
                                     animateMenu:
-                                        widget.animateMenuItems ?? true,
+                                    widget.animateMenuItems ?? true,
                                     bottomOffsetHeight:
-                                        widget.bottomOffsetHeight ?? 0,
+                                    widget.bottomOffsetHeight ?? 0,
                                     menuOffset: widget.menuOffset ?? 0,
                                   ));
                             },
@@ -863,7 +394,7 @@ class _ProductCardState extends State<ProductCard>
         ? InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => Product(product: widget.snap.data),
+                builder: (context) => Product(product: widget.snap),
               ));
             },
             child: ScaleTransition(
@@ -893,8 +424,7 @@ class _ProductCardState extends State<ProductCard>
   }
 }
 
-class FocusedMenuDetails extends StatelessWidget {
-  final List<Widget> menuItems;
+class FocusedMenuDetails extends StatefulWidget {
   final BoxDecoration menuBoxDecoration;
   final Offset childOffset;
   final double itemExtent;
@@ -906,40 +436,251 @@ class FocusedMenuDetails extends StatelessWidget {
   final Color blurBackgroundColor;
   final double bottomOffsetHeight;
   final double menuOffset;
+  final snap;
 
-  const FocusedMenuDetails(
-      {Key key,
-      @required this.menuItems,
-      @required this.child,
-      @required this.childOffset,
-      @required this.childSize,
-      @required this.menuBoxDecoration,
-      @required this.itemExtent,
-      @required this.animateMenu,
-      @required this.blurSize,
-      @required this.blurBackgroundColor,
-      @required this.menuWidth,
-      this.bottomOffsetHeight,
-      this.menuOffset})
+  FocusedMenuDetails({Key key,
+    @required this.snap,
+    @required this.child,
+    @required this.childOffset,
+    @required this.childSize,
+    @required this.menuBoxDecoration,
+    @required this.itemExtent,
+    @required this.animateMenu,
+    @required this.blurSize,
+    @required this.blurBackgroundColor,
+    @required this.menuWidth,
+    this.bottomOffsetHeight,
+    this.menuOffset})
       : super(key: key);
 
   @override
+  _FocusedMenuDetailsState createState() => _FocusedMenuDetailsState();
+}
+
+class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
+  List<Widget> menuItems;
+
+  Map<String, dynamic> variants = new Map<String, dynamic>();
+
+  @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    var t;
+    for (int index = 0; index < widget.snap['prices']; index++) {
+      if ((t = Storage.cart.singleWhere((element) {
+        return element.documentID ==
+            '${widget.snap['product_id']}_price${index + 1}';
+      }, orElse: () {
+        return null;
+      })) !=
+          null) {
+        variants['${widget.snap['product_id']}_price${index + 1}'] = t.data;
+      } else {
+        variants['${widget.snap['product_id']}_price${index + 1}'] = null;
+      }
+    }
+    this.menuItems = List.generate(widget.snap['prices'], (index) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              widget.snap['quantity_${index + 1}'].toString() != '0'
+                  ? 'Rs.${widget.snap['price_${index + 1}']} - ${widget
+                  .snap['quantity_${index + 1}']}${widget.snap['unit_${index +
+                  1}']}'
+                  : 'Rs.${widget.snap['price_${index + 1}']}',
+              style: TextStyle(fontSize: 12, color: Colors.black),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+            if (widget.snap['price_${index + 1}'] !=
+                widget.snap['mrp_${index + 1}'])
+              Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: 4,
+                  ),
+                  Text(
+                    'Rs.${widget.snap['mrp_${index + 1}']}',
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.red,
+                        decoration: TextDecoration.lineThrough,
+                        decorationColor: Colors.black),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  SizedBox(
+                    width: 4,
+                  ),
+                  Text(
+                    '${((widget.snap['mrp_${index + 1}'] -
+                        widget.snap['price_${index + 1}']) /
+                        widget.snap['mrp_${index + 1}'] * 100).round()}%',
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ],
+              ),
+            Spacer(),
+            if (widget.snap['stock'] &&
+                variants['${widget.snap['product_id']}_price${index + 1}'] ==
+                    null)
+              RaisedButton.icon(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  color: Color(0xffa6e553),
+                  onPressed: () async {
+                    await Firestore.instance
+                        .collection('users')
+                        .document('sumanth')
+                        .collection('grocery_cart')
+                        .document(
+                        '${widget.snap['product_id']}_price${index + 1}')
+                        .setData({
+                      'product_id': widget.snap['product_id'],
+                      'price_num': index + 1,
+                      'quantity': 1,
+                    });
+                    setState(() {});
+                  },
+                  icon: Icon(
+                    Icons.shopping_basket,
+                    size: 16,
+                  ),
+                  label: Text(
+                    'Add to cart',
+                    style: TextStyle(fontSize: 12),
+                  )),
+            if (widget.snap['stock'] &&
+                variants['${widget.snap['product_id']}_price${index + 1}'] !=
+                    null)
+              Row(
+                children: <Widget>[
+                  InkWell(
+                    onTap: () async {
+                      if (variants[
+                      '${widget.snap['product_id']}_price${index + 1}']
+                      ['quantity'] !=
+                          1) {
+                        await Firestore.instance
+                            .collection('users')
+                            .document('sumanth')
+                            .collection('grocery_cart')
+                            .document(
+                            '${widget.snap['product_id']}_price${index + 1}')
+                            .updateData({
+                          'quantity': variants[
+                          '${widget.snap['product_id']}_price${index + 1}']
+                          ['quantity'] -
+                              1,
+                        });
+                      } else {
+                        await Firestore.instance
+                            .collection('users')
+                            .document('sumanth')
+                            .collection('grocery_cart')
+                            .document(
+                            '${widget.snap['product_id']}_price${index + 1}')
+                            .delete();
+                      }
+                      setState(() {});
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Colors.black)),
+                      child: Icon(
+                        Icons.remove,
+                        color: Colors.blue,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    variants['${widget.snap['product_id']}_price${index + 1}']
+                    ['quantity']
+                        .toString(),
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      await Firestore.instance
+                          .collection('users')
+                          .document('sumanth')
+                          .collection('grocery_cart')
+                          .document(
+                          '${widget.snap['product_id']}_price${index + 1}')
+                          .updateData({
+                        'quantity': variants[
+                        '${widget.snap['product_id']}_price${index + 1}']
+                        ['quantity'] +
+                            1,
+                      });
+                      setState(() {});
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: Colors.black)),
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.blue,
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            if (!widget.snap['stock'])
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(8),
+                            bottomRight: Radius.circular(8))),
+                    onPressed: () {},
+                    child: Text('Out Of Stock')),
+              )
+          ],
+        ),
+      );
+    }).toList();
+    Size size = MediaQuery
+        .of(context)
+        .size;
 
     final maxMenuHeight = size.height * 0.5;
-    final listHeight = menuItems.length * (itemExtent ?? 56.0);
+    final listHeight = menuItems.length * (widget.itemExtent ?? 56.0);
 
     final maxMenuWidth = 300.0;
     final menuHeight =
-        listHeight < maxMenuHeight ? listHeight + 12 : maxMenuHeight;
-    final leftOffset = (childOffset.dx + maxMenuWidth) < size.width
-        ? childOffset.dx
-        : (childOffset.dx - maxMenuWidth + childSize.width);
-    final topOffset = (childOffset.dy + menuHeight + childSize.height) <
-            size.height - bottomOffsetHeight
-        ? childOffset.dy + childSize.height + menuOffset
-        : childOffset.dy - menuHeight - menuOffset;
+    listHeight < maxMenuHeight ? listHeight + 12 : maxMenuHeight;
+    final leftOffset = (widget.childOffset.dx + maxMenuWidth) < size.width
+        ? widget.childOffset.dx
+        : (widget.childOffset.dx - maxMenuWidth + widget.childSize.width);
+    final topOffset = (widget.childOffset.dy +
+        menuHeight +
+        widget.childSize.height) <
+        size.height - widget.bottomOffsetHeight
+        ? widget.childOffset.dy + widget.childSize.height + widget.menuOffset
+        : widget.childOffset.dy - menuHeight - widget.menuOffset;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -951,7 +692,8 @@ class FocusedMenuDetails extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: Container(
-                  color: (blurBackgroundColor ?? Colors.black).withOpacity(0.2),
+                  color: (widget.blurBackgroundColor ?? Colors.black)
+                      .withOpacity(0.2),
                 )),
             Positioned(
               top: topOffset,
@@ -970,11 +712,11 @@ class FocusedMenuDetails extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   width: maxMenuWidth,
                   height: menuHeight,
-                  decoration: menuBoxDecoration ??
+                  decoration: widget.menuBoxDecoration ??
                       BoxDecoration(
                           color: Colors.white,
                           borderRadius:
-                              const BorderRadius.all(Radius.circular(5.0)),
+                          const BorderRadius.all(Radius.circular(5.0)),
                           boxShadow: [
                             const BoxShadow(
                                 color: Colors.black38,
@@ -989,7 +731,7 @@ class FocusedMenuDetails extends StatelessWidget {
                       physics: BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
                         Widget item = menuItems[index];
-                        if (animateMenu) {
+                        if (widget.animateMenu) {
                           return TweenAnimationBuilder(
                               builder: (context, value, child) {
                                 return Transform(
@@ -1011,14 +753,14 @@ class FocusedMenuDetails extends StatelessWidget {
               ),
             ),
             Positioned(
-                top: childOffset.dy,
-                left: childOffset.dx,
+                top: widget.childOffset.dy,
+                left: widget.childOffset.dx,
                 child: AbsorbPointer(
                     absorbing: true,
                     child: Container(
-                        width: childSize.width,
-                        height: childSize.height,
-                        child: child))),
+                        width: widget.childSize.width,
+                        height: widget.childSize.height,
+                        child: widget.child))),
           ],
         ),
       ),
