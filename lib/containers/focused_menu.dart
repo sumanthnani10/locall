@@ -200,9 +200,9 @@ class _ProductCardState extends State<ProductCard>
                                       blurBackgroundColor:
                                           widget.blurBackgroundColor,
                                       animateMenu:
-                                      widget.animateMenuItems ?? true,
+                                          widget.animateMenuItems ?? true,
                                       bottomOffsetHeight:
-                                      widget.bottomOffsetHeight ?? 0,
+                                          widget.bottomOffsetHeight ?? 0,
                                       menuOffset: widget.menuOffset ?? 0,
                                     ));
                               },

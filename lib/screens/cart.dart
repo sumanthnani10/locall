@@ -14,6 +14,7 @@ class _CartState extends State<Cart> {
   List<int> tl = new List<int>();
   List<int> ml = new List<int>();
   int total = 0, mrp = 0;
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -209,6 +210,8 @@ class _CartState extends State<Cart> {
                               children: <Widget>[
                                 InkWell(
                                   onTap: () async {
+                                    showLoadingDialog(
+                                        context, 'Adding to Cart');
                                     products[id]['quantity']++;
                                     setState(() {});
                                     await Firestore.instance
@@ -218,9 +221,10 @@ class _CartState extends State<Cart> {
                                         .document(Storage.cart[i].documentID)
                                         .updateData({
                                       'quantity':
-                                          Storage.cart[i]['quantity'] + 1,
+                                      Storage.cart[i]['quantity'] + 1,
                                     });
                                     setState(() {});
+                                    Navigator.pop(context);
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -247,6 +251,8 @@ class _CartState extends State<Cart> {
                                 ),
                                 InkWell(
                                   onTap: () async {
+                                    showLoadingDialog(
+                                        context, 'Adding to Cart');
                                     if (Storage.cart[i]['quantity'] > 1) {
                                       products[id]['quantity']--;
                                       setState(() {});
@@ -257,7 +263,7 @@ class _CartState extends State<Cart> {
                                           .document(Storage.cart[i].documentID)
                                           .updateData({
                                         'quantity':
-                                            Storage.cart[i]['quantity'] - 1,
+                                        Storage.cart[i]['quantity'] - 1,
                                       });
                                     } else {
                                       products[id] = null;
@@ -270,6 +276,7 @@ class _CartState extends State<Cart> {
                                           .delete();
                                     }
                                     setState(() {});
+                                    Navigator.pop(context);
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -348,9 +355,9 @@ class _CartState extends State<Cart> {
                       color: Colors.greenAccent,
                       onPressed: () async {
                         //TODO: change sumanth to dynamic
-
+                        showLoadingDialog(context, 'Placing Order');
                         List<Map<String, dynamic>> cart =
-                            new List<Map<String, dynamic>>();
+                        new List<Map<String, dynamic>>();
 
                         Storage.cart.forEach((element) {
                           cart.add(element.data);
@@ -358,25 +365,37 @@ class _CartState extends State<Cart> {
 
                         Map<String, dynamic> order = {
                           'products': cart,
-                          'customer_id': 'sumanth',
+                          'details': {
+                            'customer_id': 'sumanth',
+                            'type': 'grocery',
+                            'provider_id': 'isnapur_grocery_sairam',
+                            'stage': 'Order Placed',
+                          },
+                          'time': {
+                            'order_placed': FieldValue.serverTimestamp()
+                          },
                           'total': total,
                           'length': Storage.cart.length,
-                          'stage': 'order placed',
-                          'from': 'isnapur_grocery_sairam'
                         };
                         await Firestore.instance
-                            .collection('locations')
-                            .document('isnapur')
-                            .collection('groceries_orders')
+                            .collection('orders')
                             .add({}).then((value) async =>
-                                order['order_id'] = await value.documentID);
+                        order['order_id'] = await value.documentID);
                         await Firestore.instance
-                            .collection('locations')
-                            .document('isnapur')
-                            .collection('groceries_orders')
+                            .collection('orders')
                             .document(order['order_id'])
                             .setData(order);
-                        print(order);
+                        var l = Storage.cart;
+                        l.forEach((e) async {
+                          await Firestore.instance
+                              .collection('users')
+                              .document('sumanth')
+                              .collection('grocery_cart')
+                              .document(e.documentID)
+                              .delete();
+                        });
+                        Navigator.pop(context);
+                        Navigator.pop(context);
                       },
                       icon: Icon(
                         Icons.done_all,
@@ -388,11 +407,41 @@ class _CartState extends State<Cart> {
                       ))
                 ],
               ),
-            )
+      )
           : Container(
-              height: 48,
-            ),
+        height: 48,
+      ),
       backgroundColor: Color(0xffa6e553),
+    );
+  }
+
+  showLoadingDialog(BuildContext context, String title) {
+    // show the dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          contentPadding: const EdgeInsets.all(8),
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(title)
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
