@@ -468,11 +468,11 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
     var t;
     for (int index = 0; index < widget.snap['prices']; index++) {
       if ((t = Storage.cart.singleWhere((element) {
-        return element.documentID ==
-            '${widget.snap['product_id']}_price${index + 1}';
-      }, orElse: () {
-        return null;
-      })) !=
+            return element.documentID ==
+                '${widget.snap['product_id']}_price${index + 1}';
+          }, orElse: () {
+            return null;
+          })) !=
           null) {
         variants['${widget.snap['product_id']}_price${index + 1}'] = t.data;
       } else {
