@@ -263,7 +263,7 @@ class _CartState extends State<Cart> {
                                           .document(Storage.cart[i].documentID)
                                           .updateData({
                                         'quantity':
-                                        Storage.cart[i]['quantity'] - 1,
+                                            Storage.cart[i]['quantity'] - 1,
                                       });
                                     } else {
                                       products[id] = null;

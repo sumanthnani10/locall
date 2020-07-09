@@ -438,19 +438,20 @@ class FocusedMenuDetails extends StatefulWidget {
   final double menuOffset;
   final snap;
 
-  FocusedMenuDetails({Key key,
-    @required this.snap,
-    @required this.child,
-    @required this.childOffset,
-    @required this.childSize,
-    @required this.menuBoxDecoration,
-    @required this.itemExtent,
-    @required this.animateMenu,
-    @required this.blurSize,
-    @required this.blurBackgroundColor,
-    @required this.menuWidth,
-    this.bottomOffsetHeight,
-    this.menuOffset})
+  FocusedMenuDetails(
+      {Key key,
+      @required this.snap,
+      @required this.child,
+      @required this.childOffset,
+      @required this.childSize,
+      @required this.menuBoxDecoration,
+      @required this.itemExtent,
+      @required this.animateMenu,
+      @required this.blurSize,
+      @required this.blurBackgroundColor,
+      @required this.menuWidth,
+      this.bottomOffsetHeight,
+      this.menuOffset})
       : super(key: key);
 
   @override
