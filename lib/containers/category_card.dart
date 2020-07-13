@@ -59,7 +59,7 @@ class _CategoryCardState extends State<CategoryCard>
                     AspectRatio(
                       aspectRatio: 4 / 3,
                       child: Image.asset(
-                        "assets/${widget.catName}.jpg",
+                        'assets/categories/${widget.catName}.jpg',
                       ),
                     ),
                     Text(

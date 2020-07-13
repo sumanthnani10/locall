@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:locall/screens/bottom_nav.dart';
+import 'package:locall/screens/login.dart';
+import 'package:locall/screens/user_details_input.dart';
 import 'package:locall/storage.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -18,16 +21,46 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   getProducts() async {
-    await Firestore.instance
-        .collection('locations')
-        .document('isnapur')
-        .collection('groceries')
-        .orderBy('name')
-        .getDocuments()
-        .then((value) {
-      Storage.products = value.documents;
-    });
-    Navigator.of(context).pushReplacement(createRoute(BottomNavBar()));
+    if (await FirebaseAuth.instance.currentUser() != null) {
+      String uid;
+      String phone;
+      await FirebaseAuth.instance.currentUser().then((value) {
+        uid = value.uid;
+        phone = value.phoneNumber;
+      });
+      await Firestore.instance
+          .collection('users')
+          .document(uid)
+          .get()
+          .then((val) async {
+        if (val.data['first_name'] == null) {
+          Navigator.pushReplacement(
+              context, createRoute(UserDetailsInput(uid, phone)));
+        } else {
+          Storage.user = val.data;
+          await Firestore.instance
+              .collection('locations')
+              .document(val.data['area'].toString().toLowerCase())
+              .get()
+              .then((value) {
+            Storage.area_details = value.data;
+            print(value.data);
+          });
+          await Firestore.instance
+              .collection('locations')
+              .document(val.data['area'].toString().toLowerCase())
+              .collection('groceries')
+              .orderBy('name')
+              .getDocuments()
+              .then((value) {
+            Storage.products = value.documents;
+          });
+          Navigator.of(context).pushReplacement(createRoute(BottomNavBar()));
+        }
+      });
+    } else {
+      Navigator.of(context).pushReplacement(createRoute(Login()));
+    }
   }
 
   @override

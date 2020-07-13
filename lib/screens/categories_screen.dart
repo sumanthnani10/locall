@@ -12,7 +12,7 @@ class CategoriesScreen extends StatelessWidget {
     'Chocolates',
     'Cleaners',
     'Dals & Pulses',
-    'Diary',
+    'Dairy',
     'Dry Fruits',
     'Edible Oils',
     'Hair Oils',

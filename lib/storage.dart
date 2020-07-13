@@ -5,4 +5,6 @@ class Storage {
   static List<DocumentSnapshot> products;
   static List<DocumentSnapshot> cart;
   static List<String> cart_products_id = new List();
+  static Map<String, dynamic> user;
+  static Map<String, dynamic> area_details;
 }

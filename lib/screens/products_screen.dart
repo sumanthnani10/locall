@@ -20,7 +20,7 @@ class _ProductsScreenState extends State<ProductsScreen>
     'Chocolates',
     'Cleaners',
     'Dals & Pulses',
-    'Diary',
+    'Dairy',
     'Dry Fruits',
     'Edible Oils',
     'Hair Oils',
@@ -52,7 +52,11 @@ class _ProductsScreenState extends State<ProductsScreen>
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
         child: Storage.cart == null
-            ? LinearProgressIndicator()
+            ? Column(
+                children: <Widget>[
+                  LinearProgressIndicator(),
+                ],
+              )
             : SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
                 child: Column(

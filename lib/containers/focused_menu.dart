@@ -488,9 +488,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
           children: <Widget>[
             Text(
               widget.snap['quantity_${index + 1}'].toString() != '0'
-                  ? 'Rs.${widget.snap['price_${index + 1}']} - ${widget
-                  .snap['quantity_${index + 1}']}${widget.snap['unit_${index +
-                  1}']}'
+                  ? 'Rs.${widget.snap['price_${index + 1}']} - ${widget.snap['quantity_${index + 1}']}${widget.snap['unit_${index + 1}']}'
                   : 'Rs.${widget.snap['price_${index + 1}']}',
               style: TextStyle(fontSize: 12, color: Colors.black),
               overflow: TextOverflow.ellipsis,

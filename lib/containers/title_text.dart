@@ -52,7 +52,9 @@ class TitleText extends StatelessWidget {
                     icon: Icon(Icons.shopping_basket),
                     label: Text(
                       Storage.cart != null
-                          ? 'Cart (${Storage.cart.length})'
+                          ? Storage.cart.length != 0
+                              ? 'Cart (${Storage.cart.length})'
+                              : 'Cart'
                           : 'Cart',
                       style: TextStyle(
                         color: Colors.black,
