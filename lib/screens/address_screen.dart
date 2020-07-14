@@ -1,22 +1,27 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:locall/storage.dart';
 
 class AddressScreen extends StatefulWidget {
+  final total;
+
+  AddressScreen({this.total});
+
   @override
   _AddressScreenState createState() => _AddressScreenState();
 }
 
 class _AddressScreenState extends State<AddressScreen> {
-  TextEditingController hnoc = new TextEditingController();
+  /*TextEditingController hnoc = new TextEditingController();
   TextEditingController streetc = new TextEditingController();
   TextEditingController landmarkc = new TextEditingController();
   TextEditingController villc = new TextEditingController();
   TextEditingController pincodec = new TextEditingController();
-  GoogleMapController map;
   String hno = '',
       street = '',
       landmark = '',
@@ -24,13 +29,16 @@ class _AddressScreenState extends State<AddressScreen> {
       dist = 'Sangareddy',
       state = 'Telangana',
       area = 'Isnapur',
-      pincode = '';
+      pincode = '';*/
+  TextEditingController addressc = new TextEditingController();
+  GoogleMapController map;
 
   LatLng custLoc;
   Position position;
   Marker custMarker;
   String custAddress;
   int c = 0;
+  ValueNotifier<bool> deliverable = ValueNotifier<bool>(true);
 
   @override
   void initState() {
@@ -48,7 +56,7 @@ class _AddressScreenState extends State<AddressScreen> {
     if (custLoc != null) {
       moveToLocation(custLoc);
     } else {
-      print(await Geolocator().checkGeolocationPermissionStatus());
+      await Geolocator().checkGeolocationPermissionStatus();
       position = await Geolocator().getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
           locationPermissionLevel: GeolocationPermission.locationWhenInUse);
@@ -62,20 +70,8 @@ class _AddressScreenState extends State<AddressScreen> {
         new CameraPosition(target: latLng, zoom: 15)));
     List<Placemark> placemark = await Geolocator()
         .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
-    custAddress = placemark.elementAt(0).name +
-        ',' +
-        placemark.elementAt(0).subLocality +
-        ',' +
-        placemark.elementAt(0).subAdministrativeArea +
-        ',' +
-        placemark.elementAt(0).locality +
-        ',' +
-        placemark.elementAt(0).administrativeArea;
-    print(custAddress);
-    print(placemark.elementAt(0).thoroughfare);
-    print(placemark.elementAt(0).subThoroughfare);
-    pincodec.text = placemark.elementAt(0).postalCode;
-    villc.text = placemark.elementAt(0).subLocality;
+    setAddress(placemark.elementAt(0));
+    custLoc = latLng;
   }
 
   moveToLocation(LatLng latLng) async {
@@ -94,23 +90,77 @@ class _AddressScreenState extends State<AddressScreen> {
     }
     map.moveCamera(CameraUpdate.newCameraPosition(
         new CameraPosition(target: latLng, zoom: 15)));
-    print(latLng.toString() + custMarker.position.toString());
     List<Placemark> placemark = await Geolocator()
         .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
-    custAddress = placemark.elementAt(0).name +
-        ',' +
-        placemark.elementAt(0).subLocality +
-        ',' +
-        placemark.elementAt(0).subAdministrativeArea +
-        ',' +
-        placemark.elementAt(0).locality +
-        ',' +
-        placemark.elementAt(0).administrativeArea;
-    print(custAddress);
-    print(placemark.elementAt(0).thoroughfare);
-    print(placemark.elementAt(0).subThoroughfare);
-    pincodec.text = placemark.elementAt(0).postalCode;
-    villc.text = placemark.elementAt(0).subLocality;
+    setAddress(placemark.elementAt(0));
+    if (await Geolocator().distanceBetween(
+            latLng.latitude,
+            latLng.longitude,
+            Storage.area_details['groceries']['location']['lat'],
+            Storage.area_details['groceries']['location']['long']) <=
+        3000.0) {
+      deliverable.value = true;
+    } else {
+      deliverable.value = false;
+    }
+  }
+
+  setAddress(placemark) {
+//    print(placemark.toJson());
+    custAddress = '';
+    if (placemark.name != '') {
+      custAddress += '${placemark.name},';
+    }
+    if (placemark.subThoroughfare != '') {
+      custAddress += '${placemark.subThoroughfare},';
+    }
+    if (placemark.subLocality != '') {
+      custAddress += '${placemark.subLocality},';
+    }
+    if (placemark.subAdministrativeArea != '') {
+      custAddress += '${placemark.subAdministrativeArea},';
+    }
+    if (placemark.thoroughfare != '') {
+      custAddress += '${placemark.thoroughfare},';
+    }
+    if (placemark.locality != '') {
+      custAddress += '${placemark.locality},';
+    }
+    if (placemark.subAdministrativeArea != '') {
+      custAddress += '${placemark.administrativeArea},';
+    }
+    if (placemark.subAdministrativeArea != '') {
+      custAddress += '${placemark.postalCode},';
+    }
+    addressc.text = custAddress;
+  }
+
+  showAlertDialog(BuildContext context, String title, String message) {
+    // Create button
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      contentPadding: EdgeInsets.all(16),
+      title: Text(title),
+      content: Text(message),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   @override
@@ -125,6 +175,64 @@ class _AddressScreenState extends State<AddressScreen> {
             'Address',
             style: TextStyle(color: Colors.black),
           ),
+          actions: <Widget>[
+            FlatButton(
+                onPressed: () async {
+                  if (deliverable.value) {
+                    showLoadingDialog(context, 'Placing Order');
+                    List<Map<String, dynamic>> cart =
+                        new List<Map<String, dynamic>>();
+
+                    Storage.cart.forEach((element) {
+                      cart.add(element.data);
+                    });
+
+                    Map<String, dynamic> order = {
+                      'products': cart,
+                      'details': {
+                        'customer_id': Storage.user['customer_id'],
+                        'type': 'grocery',
+                        'provider_id': 'isnapur_grocery_sairam',
+                        'stage': 'Order Placed',
+                      },
+                      'time': {'order_placed': FieldValue.serverTimestamp()},
+                      'total': widget.total,
+                      'length': Storage.cart.length,
+                      'address': custAddress,
+                      'location': {
+                        'lat': custLoc.latitude,
+                        'long': custLoc.longitude,
+                      }
+                    };
+                    await Firestore.instance.collection('orders').add({}).then(
+                        (value) async =>
+                            order['order_id'] = await value.documentID);
+                    await Firestore.instance
+                        .collection('orders')
+                        .document(order['order_id'])
+                        .setData(order);
+                    var l = Storage.cart;
+                    l.forEach((e) async {
+                      await Firestore.instance
+                          .collection('users')
+                          .document(Storage.user['customer_id'])
+                          .collection('grocery_cart')
+                          .document(e.documentID)
+                          .delete();
+                    });
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  } else {
+                    showAlertDialog(context, 'Sorry',
+                        'You are out of our delivery range.\nWe will be available there soon.');
+                  }
+                },
+                child: Text(
+                  'Next',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ))
+          ],
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Color(0xffa6e553),
           elevation: 0,
@@ -135,6 +243,27 @@ class _AddressScreenState extends State<AddressScreen> {
             child: Center(
               child: Column(
                 children: <Widget>[
+                  /*Container(
+                    width: 330,
+                    child: Text(
+                        '${Storage.user['first_name']} ${Storage.user['last_name']},\n${custAddress}'),
+                  ),*/
+                  ValueListenableBuilder(
+                    valueListenable: deliverable,
+                    builder: (_, d, __) {
+                      return Container(
+                        width: 330,
+                        padding: const EdgeInsets.all(8),
+                        margin: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: d ? Colors.greenAccent : Colors.redAccent,
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Text(d
+                            ? 'Order can be delivered to your location.'
+                            : 'Order cannot be delivered to your location.'),
+                      );
+                    },
+                  ),
                   Container(
                     height: 300,
                     width: 330,
@@ -161,6 +290,27 @@ class _AddressScreenState extends State<AddressScreen> {
                     ),
                   ),
                   Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    width: 330,
+                    child: TextField(
+                      onChanged: (v) {
+                        custAddress = v;
+                      },
+                      keyboardType: TextInputType.text,
+                      controller: addressc,
+                      textCapitalization: TextCapitalization.words,
+                      textInputAction: TextInputAction.done,
+                      maxLines: 6,
+                      decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(16.0),
+                          border: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 2),
+                              borderRadius: BorderRadius.circular(8)),
+                          labelText: 'Address *'),
+                    ),
+                  ),
+                  /*Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     width: 330,
                     child: TextFormField(
@@ -443,7 +593,7 @@ class _AddressScreenState extends State<AddressScreen> {
                         ),
                       ),
                     ],
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -451,6 +601,36 @@ class _AddressScreenState extends State<AddressScreen> {
         ),
         backgroundColor: Colors.white,
       ),
+    );
+  }
+
+  showLoadingDialog(BuildContext context, String title) {
+    // show the dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          contentPadding: const EdgeInsets.all(8),
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(title)
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
