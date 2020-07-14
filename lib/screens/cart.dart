@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:locall/containers/title_text.dart';
+import 'package:locall/screens/address_screen.dart';
 import 'package:locall/storage.dart';
 
 class Cart extends StatefulWidget {
@@ -353,8 +354,8 @@ class _CartState extends State<Cart> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                       color: Colors.greenAccent,
-                      onPressed: () async {
-                        //TODO: change sumanth to dynamic
+                      onPressed: () {
+                        /*
                         showLoadingDialog(context, 'Placing Order');
                         List<Map<String, dynamic>> cart =
                         new List<Map<String, dynamic>>();
@@ -366,7 +367,7 @@ class _CartState extends State<Cart> {
                         Map<String, dynamic> order = {
                           'products': cart,
                           'details': {
-                            'customer_id': 'sumanth',
+                            'customer_id': Storage.user['customer_id'],
                             'type': 'grocery',
                             'provider_id': 'isnapur_grocery_sairam',
                             'stage': 'Order Placed',
@@ -389,13 +390,14 @@ class _CartState extends State<Cart> {
                         l.forEach((e) async {
                           await Firestore.instance
                               .collection('users')
-                              .document('sumanth')
+                              .document(Storage.user['customer_id'])
                               .collection('grocery_cart')
                               .document(e.documentID)
                               .delete();
                         });
                         Navigator.pop(context);
-                        Navigator.pop(context);
+                        Navigator.pop(context);*/
+                        Navigator.push(context, createRoute(AddressScreen()));
                       },
                       icon: Icon(
                         Icons.done_all,
@@ -407,11 +409,31 @@ class _CartState extends State<Cart> {
                       ))
                 ],
               ),
-      )
+            )
           : Container(
-        height: 48,
-      ),
+              height: 48,
+            ),
       backgroundColor: Color(0xffa6e553),
+    );
+  }
+
+  Route createRoute(dest) {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 500),
+      pageBuilder: (context, animation, secondaryAnimation) => dest,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(1, 0);
+        var end = Offset.zero;
+        var curve = Curves.fastOutSlowIn;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
     );
   }
 

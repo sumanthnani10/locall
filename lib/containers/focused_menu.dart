@@ -515,9 +515,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                     width: 4,
                   ),
                   Text(
-                    '${((widget.snap['mrp_${index + 1}'] -
-                        widget.snap['price_${index + 1}']) /
-                        widget.snap['mrp_${index + 1}'] * 100).round()}%',
+                    '${((widget.snap['mrp_${index + 1}'] - widget.snap['price_${index + 1}']) / widget.snap['mrp_${index + 1}'] * 100).round()}%',
                     style: TextStyle(
                         fontSize: 11,
                         color: Colors.green,
