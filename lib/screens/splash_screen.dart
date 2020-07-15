@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
           .document(uid)
           .get()
           .then((val) async {
-        if (val.data['first_name'] == null) {
+        if (val.data == null) {
           Navigator.pushReplacement(
               context, createRoute(UserDetailsInput(uid, phone)));
         } else {

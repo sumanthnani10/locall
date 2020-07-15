@@ -97,14 +97,21 @@ class _OtpScreenState extends State<OtpScreen>
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                     onPressed: () {
+                      showLoadingDialog(context, 'Signing In');
                       AuthCredential credential =
                           PhoneAuthProvider.getCredential(
                               verificationId: verificationId, smsCode: otp);
                       FirebaseAuth.instance
                           .signInWithCredential(credential)
-                          .catchError((error) {
-                        showAlertDialog(
-                            context, 'Wrong OTP', 'OTP is wrong.Try Again');
+                          .then((value) async {
+                        Navigator.pop(context);
+                        Navigator.pop(context); /**/
+                        Navigator.pushReplacement(
+                            context, createRoute(SplashScreen()));
+                      }).catchError(() {
+                        Navigator.pop(context);
+                        showAlertDialog(context, 'Sign In Failed',
+                            'An error occured. Try Again');
                       });
                     },
                     child: Text(
