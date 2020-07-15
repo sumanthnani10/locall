@@ -211,7 +211,7 @@ class _ProductCardState extends State<ProductCard>
                     } else {
                       await Firestore.instance
                           .collection('users')
-                          .document('sumanth')
+                          .document('${Storage.user['customer_id']}')
                           .collection('grocery_cart')
                           .document('${widget.snap['product_id']}_price1')
                           .setData({
@@ -292,7 +292,7 @@ class _ProductCardState extends State<ProductCard>
                           1) {
                         await Firestore.instance
                             .collection('users')
-                            .document('sumanth')
+                            .document('${Storage.user['customer_id']}')
                             .collection('grocery_cart')
                             .document('${widget.snap['product_id']}_price1')
                             .updateData({
@@ -304,7 +304,7 @@ class _ProductCardState extends State<ProductCard>
                       } else {
                         await Firestore.instance
                             .collection('users')
-                            .document('sumanth')
+                            .document('${Storage.user['customer_id']}')
                             .collection('grocery_cart')
                             .document('${widget.snap['product_id']}_price1')
                             .delete();
@@ -332,7 +332,7 @@ class _ProductCardState extends State<ProductCard>
                     onTap: () async {
                       await Firestore.instance
                           .collection('users')
-                          .document('sumanth')
+                          .document('${Storage.user['customer_id']}')
                           .collection('grocery_cart')
                           .document('${widget.snap['product_id']}_price1')
                           .updateData({
@@ -536,7 +536,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                   onPressed: () async {
                     await Firestore.instance
                         .collection('users')
-                        .document('sumanth')
+                        .document('${Storage.user['customer_id']}')
                         .collection('grocery_cart')
                         .document(
                         '${widget.snap['product_id']}_price${index + 1}')
@@ -568,7 +568,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                           1) {
                         await Firestore.instance
                             .collection('users')
-                            .document('sumanth')
+                            .document('${Storage.user['customer_id']}')
                             .collection('grocery_cart')
                             .document(
                             '${widget.snap['product_id']}_price${index + 1}')
@@ -581,7 +581,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                       } else {
                         await Firestore.instance
                             .collection('users')
-                            .document('sumanth')
+                            .document('${Storage.user['customer_id']}')
                             .collection('grocery_cart')
                             .document(
                             '${widget.snap['product_id']}_price${index + 1}')
@@ -617,7 +617,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                     onTap: () async {
                       await Firestore.instance
                           .collection('users')
-                          .document('sumanth')
+                          .document('${Storage.user['customer_id']}')
                           .collection('grocery_cart')
                           .document(
                           '${widget.snap['product_id']}_price${index + 1}')

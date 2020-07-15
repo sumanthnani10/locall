@@ -217,7 +217,7 @@ class _CartState extends State<Cart> {
                                     setState(() {});
                                     await Firestore.instance
                                         .collection('users')
-                                        .document('sumanth')
+                                        .document('${Storage.user['customer_id']}')
                                         .collection('grocery_cart')
                                         .document(Storage.cart[i].documentID)
                                         .updateData({
@@ -259,7 +259,7 @@ class _CartState extends State<Cart> {
                                       setState(() {});
                                       await Firestore.instance
                                           .collection('users')
-                                          .document('sumanth')
+                                          .document('${Storage.user['customer_id']}')
                                           .collection('grocery_cart')
                                           .document(Storage.cart[i].documentID)
                                           .updateData({
@@ -271,7 +271,7 @@ class _CartState extends State<Cart> {
                                       setState(() {});
                                       await Firestore.instance
                                           .collection('users')
-                                          .document('sumanth')
+                                          .document('${Storage.user['customer_id']}')
                                           .collection('grocery_cart')
                                           .document(Storage.cart[i].documentID)
                                           .delete();
@@ -355,49 +355,12 @@ class _CartState extends State<Cart> {
                           borderRadius: BorderRadius.circular(8)),
                       color: Colors.greenAccent,
                       onPressed: () {
-                        /*
-                        showLoadingDialog(context, 'Placing Order');
-                        List<Map<String, dynamic>> cart =
-                        new List<Map<String, dynamic>>();
-
-                        Storage.cart.forEach((element) {
-                          cart.add(element.data);
-                        });
-
-                        Map<String, dynamic> order = {
-                          'products': cart,
-                          'details': {
-                            'customer_id': Storage.user['customer_id'],
-                            'type': 'grocery',
-                            'provider_id': 'isnapur_grocery_sairam',
-                            'stage': 'Order Placed',
-                          },
-                          'time': {
-                            'order_placed': FieldValue.serverTimestamp()
-                          },
-                          'total': total,
-                          'length': Storage.cart.length,
-                        };
-                        await Firestore.instance
-                            .collection('orders')
-                            .add({}).then((value) async =>
-                        order['order_id'] = await value.documentID);
-                        await Firestore.instance
-                            .collection('orders')
-                            .document(order['order_id'])
-                            .setData(order);
-                        var l = Storage.cart;
-                        l.forEach((e) async {
-                          await Firestore.instance
-                              .collection('users')
-                              .document(Storage.user['customer_id'])
-                              .collection('grocery_cart')
-                              .document(e.documentID)
-                              .delete();
-                        });
-                        Navigator.pop(context);
-                        Navigator.pop(context);*/
-                        Navigator.push(context, createRoute(AddressScreen()));
+                        Navigator.push(
+                            context,
+                            createRoute(AddressScreen(
+                                total: total,
+                                mrp: mrp,
+                                saved: (((mrp - total) / mrp) * 100).round())));
                       },
                       icon: Icon(
                         Icons.done_all,

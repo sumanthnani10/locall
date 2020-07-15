@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:locall/screens/grocery_orders.dart';
 import 'package:locall/screens/login.dart';
 import 'package:locall/storage.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -88,39 +89,15 @@ class _ProfileState extends State<Profile> {
                   Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'House No./Flat No.',
-                          style: TextStyle(fontSize: 12, color: Colors.black54),
-                        ),
-                        Text('12-80/2'),
-                        Text(
-                          'Street',
-                          style: TextStyle(fontSize: 12, color: Colors.black54),
-                        ),
-                        Text('Srinagar Colony'),
-                        Text(
-                          'Landmark',
-                          style: TextStyle(fontSize: 12, color: Colors.black54),
-                        ),
-                        Text('School'),
-                        Text(
-                          'Area',
-                          style: TextStyle(fontSize: 12, color: Colors.black54),
-                        ),
-                        Text('Isnapur'),
-                        Text(
-                          'Pincode',
-                          style: TextStyle(fontSize: 12, color: Colors.black54),
-                        ),
-                        Text('502319'),
-                      ],
+                    child: Text(
+                      '${Storage.user['first_name']} ${Storage.user['last_name']}\n${Storage.user['address'] ?? 'No Address'}',
+                      style: TextStyle(fontSize: 12),
                     ),
                   ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(createRoute(GroceryOrders()));
+                  },
                   child: Container(
                     margin:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -138,7 +115,7 @@ class _ProfileState extends State<Profile> {
                 InkWell(
                   onTap: () {
                     FirebaseAuth.instance.signOut();
-                    Navigator.push(context, createRoute(Login()));
+                    Navigator.pushReplacement(context, createRoute(Login()));
                   },
                   child: Container(
                     margin:
@@ -167,7 +144,7 @@ class _ProfileState extends State<Profile> {
       transitionDuration: Duration(milliseconds: 500),
       pageBuilder: (context, animation, secondaryAnimation) => dest,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = Offset(0, 1);
+        var begin = Offset(1, 0);
         var end = Offset.zero;
         var curve = Curves.fastOutSlowIn;
 

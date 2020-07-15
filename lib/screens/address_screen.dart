@@ -5,12 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:locall/screens/grocery_order.dart';
 import 'package:locall/storage.dart';
 
 class AddressScreen extends StatefulWidget {
-  final total;
+  final total, mrp, saved;
 
-  AddressScreen({this.total});
+  AddressScreen({this.total, this.mrp, this.saved});
 
   @override
   _AddressScreenState createState() => _AddressScreenState();
@@ -195,8 +196,12 @@ class _AddressScreenState extends State<AddressScreen> {
                         'provider_id': 'isnapur_grocery_sairam',
                         'stage': 'Order Placed',
                       },
-                      'time': {'order_placed': FieldValue.serverTimestamp()},
-                      'total': widget.total,
+                      'time': {'order_placed': Timestamp.now()},
+                      'price': {
+                        'total': widget.total,
+                        'mrp': widget.mrp,
+                        'saved': widget.saved,
+                      },
                       'length': Storage.cart.length,
                       'address': custAddress,
                       'location': {
@@ -211,6 +216,18 @@ class _AddressScreenState extends State<AddressScreen> {
                         .collection('orders')
                         .document(order['order_id'])
                         .setData(order);
+
+                    await Firestore.instance
+                        .collection('users')
+                        .document(Storage.user['customer_id'])
+                        .updateData({
+                      'address': custAddress,
+                      'location': {
+                        'lat': custLoc.latitude,
+                        'long': custLoc.longitude,
+                      }
+                    });
+
                     var l = Storage.cart;
                     l.forEach((e) async {
                       await Firestore.instance
@@ -220,9 +237,12 @@ class _AddressScreenState extends State<AddressScreen> {
                           .document(e.documentID)
                           .delete();
                     });
+                    order['time']['order_placed'] = Timestamp.now();
                     Navigator.pop(context);
                     Navigator.pop(context);
                     Navigator.pop(context);
+                    Navigator.of(context)
+                        .push(createRoute(GroceryOrder(order)));
                   } else {
                     showAlertDialog(context, 'Sorry',
                         'You are out of our delivery range.\nWe will be available there soon.');
@@ -601,6 +621,26 @@ class _AddressScreenState extends State<AddressScreen> {
         ),
         backgroundColor: Colors.white,
       ),
+    );
+  }
+
+  Route createRoute(dest) {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 500),
+      pageBuilder: (context, animation, secondaryAnimation) => dest,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(1, 0);
+        var end = Offset.zero;
+        var curve = Curves.fastOutSlowIn;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
     );
   }
 

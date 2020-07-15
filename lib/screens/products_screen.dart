@@ -65,11 +65,6 @@ class _ProductsScreenState extends State<ProductsScreen>
                     if (categories[i] == categories[0]) {
                       t = Storage.products;
                       t.sort((a, b) {
-                        /*if (a['creation'] == null) {
-                    print(a['name']);
-                  }
-                  if (a['creation'] == null) return -1;
-                  if (b['creation'] == null) return 1;*/
                         if (b['creation']
                             .toDate()
                             .isBefore(a['creation'].toDate()))

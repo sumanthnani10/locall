@@ -182,7 +182,7 @@ class _ProductState extends State<Product> {
                                   onPressed: () async {
                                     await Firestore.instance
                                         .collection('users')
-                                        .document('sumanth')
+                                        .document('${Storage.user['customer_id']}')
                                         .collection('grocery_cart')
                                         .document(
                                             '${widget.product['product_id']}_price${index + 1}')
@@ -216,7 +216,7 @@ class _ProductState extends State<Product> {
                                           1) {
                                         await Firestore.instance
                                             .collection('users')
-                                            .document('sumanth')
+                                            .document('${Storage.user['customer_id']}')
                                             .collection('grocery_cart')
                                             .document(
                                                 '${widget.product['product_id']}_price${index + 1}')
@@ -229,7 +229,7 @@ class _ProductState extends State<Product> {
                                       } else {
                                         await Firestore.instance
                                             .collection('users')
-                                            .document('sumanth')
+                                            .document('${Storage.user['customer_id']}')
                                             .collection('grocery_cart')
                                             .document(
                                                 '${widget.product['product_id']}_price${index + 1}')
@@ -267,7 +267,7 @@ class _ProductState extends State<Product> {
                                     onTap: () async {
                                       await Firestore.instance
                                           .collection('users')
-                                          .document('sumanth')
+                                          .document('${Storage.user['customer_id']}')
                                           .collection('grocery_cart')
                                           .document(
                                               '${widget.product['product_id']}_price${index + 1}')

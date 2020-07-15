@@ -353,7 +353,7 @@ class _ProductItemState extends State<ProductItem>
                           1) {
                         await Firestore.instance
                             .collection('users')
-                            .document('sumanth')
+                            .document('${Storage.user['customer_id']}')
                             .collection('grocery_cart')
                             .document(
                             '${widget.snap['product_id']}_price1}')
@@ -366,7 +366,7 @@ class _ProductItemState extends State<ProductItem>
                       } else {
                         await Firestore.instance
                             .collection('users')
-                            .document('sumanth')
+                            .document('${Storage.user['customer_id']}')
                             .collection('grocery_cart')
                             .document(
                             '${widget.product['product_id']}_price${index + 1}')
@@ -399,7 +399,7 @@ class _ProductItemState extends State<ProductItem>
                       /*
                       await Firestore.instance
                           .collection('users')
-                          .document('sumanth')
+                          .document('${Storage.user['customer_id']}')
                           .collection('grocery_cart')
                           .document(
                           '${widget.product['product_id']}_price${index + 1}')

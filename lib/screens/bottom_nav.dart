@@ -48,7 +48,7 @@ class _BottomNavBarState extends State<BottomNavBar>
   getCart() async {
     await Firestore.instance
         .collection('users')
-        .document('sumanth')
+        .document('${Storage.user['customer_id']}')
         .collection('grocery_cart')
         .snapshots()
         .listen((value) {

@@ -54,6 +54,10 @@ class _SplashScreenState extends State<SplashScreen> {
               .getDocuments()
               .then((value) {
             Storage.products = value.documents;
+            Storage.productsMap.clear();
+            Storage.products.forEach((element) {
+              Storage.productsMap[element.documentID] = element;
+            });
           });
           Navigator.of(context).pushReplacement(createRoute(BottomNavBar()));
         }
