@@ -144,7 +144,7 @@ class _OtpScreenState extends State<OtpScreen>
     };
 
     final PhoneVerificationFailed verifailed = (AuthException ae) {
-      print('${ae.message} 12345678');
+      //print('${ae.message} 12345678');
     };
 
     final PhoneCodeSent codeSent = (String verId, [int forceResend]) {

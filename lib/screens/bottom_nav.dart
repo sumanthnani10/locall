@@ -5,6 +5,7 @@ import 'package:locall/containers/title_text.dart';
 import 'package:locall/screens/categories_screen.dart';
 import 'package:locall/screens/products_screen.dart';
 import 'package:locall/screens/profile.dart';
+import 'package:locall/service/notification_handler.dart';
 import 'package:locall/storage.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,6 +23,7 @@ class _BottomNavBarState extends State<BottomNavBar>
 
   @override
   void initState() {
+    NotificationHandler.instance.init(context);
     tabController = new TabController(length: 4, vsync: this, initialIndex: 2);
     tabController.addListener(() {
       setState(() {
@@ -66,7 +68,7 @@ class _BottomNavBarState extends State<BottomNavBar>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
+        preferredSize: Size.fromHeight(72),
         child: TitleText(
           appBarTitle,
           cart: false,

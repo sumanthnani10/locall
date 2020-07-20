@@ -40,15 +40,15 @@ class _SplashScreenState extends State<SplashScreen> {
           Storage.user = val.data;
           await Firestore.instance
               .collection('locations')
-              .document(val.data['area'].toString().toLowerCase())
+              .document(val.data['grocery']['area'].toString().toLowerCase())
               .get()
               .then((value) {
             Storage.area_details = value.data;
-            print(value.data);
+            //print(value.data);
           });
           await Firestore.instance
               .collection('locations')
-              .document(val.data['area'].toString().toLowerCase())
+              .document(val.data['grocery']['area'].toString().toLowerCase())
               .collection('groceries')
               .orderBy('name')
               .getDocuments()

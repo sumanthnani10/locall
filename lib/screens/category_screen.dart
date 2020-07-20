@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:locall/containers/focused_menu.dart';
 import 'package:locall/containers/product_item.dart';
+import 'package:locall/containers/title_text.dart';
 
 import 'bottom_nav.dart';
 
@@ -33,14 +34,12 @@ class _CategoryScreenState extends State<CategoryScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(72),
+        child: TitleText(
           widget.category,
-          style: TextStyle(color: Colors.black),
+          cart: false,
         ),
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black),
-        backgroundColor: Color(0xffa6e553),
       ),
       backgroundColor: Color(0xffa6e553),
       body: Container(
@@ -94,7 +93,7 @@ class _CategoryScreenState extends State<CategoryScreen>
                         shrinkWrap: true,
                         childAspectRatio: 0.68,
                         children: List.generate(visproducts.length, (index) {
-                          return ProductItem(
+                          return ProductCard(
                             snap: visproducts[index],
                             hw: false,
                           );

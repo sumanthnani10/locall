@@ -209,6 +209,7 @@ class _ProductCardState extends State<ProductCard>
                               fullscreenDialog: true,
                               opaque: false));
                     } else {
+                      showLoadingDialog(context, 'Adding to Cart');
                       await Firestore.instance
                           .collection('users')
                           .document('${Storage.user['customer_id']}')
@@ -219,6 +220,7 @@ class _ProductCardState extends State<ProductCard>
                         'price_num': 1,
                         'quantity': 1,
                       });
+                      Navigator.pop(context);
                       setState(() {});
                     }
                   },
@@ -290,6 +292,7 @@ class _ProductCardState extends State<ProductCard>
                       if (variants['${widget.snap['product_id']}_price1']
                               ['quantity'] !=
                           1) {
+                        showLoadingDialog(context, 'Updating Cart');
                         await Firestore.instance
                             .collection('users')
                             .document('${Storage.user['customer_id']}')
@@ -301,13 +304,16 @@ class _ProductCardState extends State<ProductCard>
                                       ['quantity'] -
                                   1,
                         });
+                        Navigator.pop(context);
                       } else {
+                        showLoadingDialog(context, 'Removing from Cart');
                         await Firestore.instance
                             .collection('users')
                             .document('${Storage.user['customer_id']}')
                             .collection('grocery_cart')
                             .document('${widget.snap['product_id']}_price1')
                             .delete();
+                        Navigator.pop(context);
                       }
                       setState(() {});
                     },
@@ -330,6 +336,7 @@ class _ProductCardState extends State<ProductCard>
                   ),
                   InkWell(
                     onTap: () async {
+                      showLoadingDialog(context, 'Updating Cart');
                       await Firestore.instance
                           .collection('users')
                           .document('${Storage.user['customer_id']}')
@@ -341,6 +348,7 @@ class _ProductCardState extends State<ProductCard>
                                     ['quantity'] +
                                 1,
                       });
+                      Navigator.pop(context);
                       setState(() {});
                     },
                     child: Container(
@@ -371,6 +379,36 @@ class _ProductCardState extends State<ProductCard>
             )
         ],
       ),
+    );
+  }
+
+  showLoadingDialog(BuildContext context, String title) {
+    // show the dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          contentPadding: const EdgeInsets.all(8),
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(title)
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -463,6 +501,36 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
 
   Map<String, dynamic> variants = new Map<String, dynamic>();
 
+  showLoadingDialog(BuildContext context, String title) {
+    // show the dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          contentPadding: const EdgeInsets.all(8),
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(title)
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var t;
@@ -534,17 +602,19 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                       borderRadius: BorderRadius.circular(8)),
                   color: Color(0xffa6e553),
                   onPressed: () async {
+                    showLoadingDialog(context, 'Adding to Cart');
                     await Firestore.instance
                         .collection('users')
                         .document('${Storage.user['customer_id']}')
                         .collection('grocery_cart')
                         .document(
-                        '${widget.snap['product_id']}_price${index + 1}')
+                            '${widget.snap['product_id']}_price${index + 1}')
                         .setData({
                       'product_id': widget.snap['product_id'],
                       'price_num': index + 1,
                       'quantity': 1,
                     });
+                    Navigator.pop(context);
                     setState(() {});
                   },
                   icon: Icon(
@@ -563,29 +633,33 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                   InkWell(
                     onTap: () async {
                       if (variants[
-                      '${widget.snap['product_id']}_price${index + 1}']
-                      ['quantity'] !=
+                                  '${widget.snap['product_id']}_price${index + 1}']
+                              ['quantity'] !=
                           1) {
+                        showLoadingDialog(context, 'Updating Cart');
                         await Firestore.instance
                             .collection('users')
                             .document('${Storage.user['customer_id']}')
                             .collection('grocery_cart')
                             .document(
-                            '${widget.snap['product_id']}_price${index + 1}')
+                                '${widget.snap['product_id']}_price${index + 1}')
                             .updateData({
                           'quantity': variants[
-                          '${widget.snap['product_id']}_price${index + 1}']
-                          ['quantity'] -
+                                      '${widget.snap['product_id']}_price${index + 1}']
+                                  ['quantity'] -
                               1,
                         });
+                        Navigator.pop(context);
                       } else {
+                        showLoadingDialog(context, 'Removing from Cart');
                         await Firestore.instance
                             .collection('users')
                             .document('${Storage.user['customer_id']}')
                             .collection('grocery_cart')
                             .document(
-                            '${widget.snap['product_id']}_price${index + 1}')
+                                '${widget.snap['product_id']}_price${index + 1}')
                             .delete();
+                        Navigator.pop(context);
                       }
                       setState(() {});
                     },
@@ -606,7 +680,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                   ),
                   Text(
                     variants['${widget.snap['product_id']}_price${index + 1}']
-                    ['quantity']
+                            ['quantity']
                         .toString(),
                     style: TextStyle(fontSize: 18),
                   ),
@@ -615,18 +689,20 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                   ),
                   InkWell(
                     onTap: () async {
+                      showLoadingDialog(context, 'Updating Cart');
                       await Firestore.instance
                           .collection('users')
                           .document('${Storage.user['customer_id']}')
                           .collection('grocery_cart')
                           .document(
-                          '${widget.snap['product_id']}_price${index + 1}')
+                              '${widget.snap['product_id']}_price${index + 1}')
                           .updateData({
                         'quantity': variants[
-                        '${widget.snap['product_id']}_price${index + 1}']
-                        ['quantity'] +
+                                    '${widget.snap['product_id']}_price${index + 1}']
+                                ['quantity'] +
                             1,
                       });
+                      Navigator.pop(context);
                       setState(() {});
                     },
                     child: Container(
@@ -658,23 +734,21 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
         ),
       );
     }).toList();
-    Size size = MediaQuery
-        .of(context)
-        .size;
+    Size size = MediaQuery.of(context).size;
 
     final maxMenuHeight = size.height * 0.5;
     final listHeight = menuItems.length * (widget.itemExtent ?? 56.0);
 
     final maxMenuWidth = 300.0;
     final menuHeight =
-    listHeight < maxMenuHeight ? listHeight + 12 : maxMenuHeight;
+        listHeight < maxMenuHeight ? listHeight + 12 : maxMenuHeight;
     final leftOffset = (widget.childOffset.dx + maxMenuWidth) < size.width
         ? widget.childOffset.dx
         : (widget.childOffset.dx - maxMenuWidth + widget.childSize.width);
     final topOffset = (widget.childOffset.dy +
-        menuHeight +
-        widget.childSize.height) <
-        size.height - widget.bottomOffsetHeight
+                menuHeight +
+                widget.childSize.height) <
+            size.height - widget.bottomOffsetHeight
         ? widget.childOffset.dy + widget.childSize.height + widget.menuOffset
         : widget.childOffset.dy - menuHeight - widget.menuOffset;
 
@@ -713,7 +787,7 @@ class _FocusedMenuDetailsState extends State<FocusedMenuDetails> {
                       BoxDecoration(
                           color: Colors.white,
                           borderRadius:
-                          const BorderRadius.all(Radius.circular(5.0)),
+                              const BorderRadius.all(Radius.circular(5.0)),
                           boxShadow: [
                             const BoxShadow(
                                 color: Colors.black38,

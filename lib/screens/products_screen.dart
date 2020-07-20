@@ -57,9 +57,110 @@ class _ProductsScreenState extends State<ProductsScreen>
                   LinearProgressIndicator(),
                 ],
               )
-            : SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
+            : Container(
+                padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
+                child: Storage.products.length != 0
+                    ? LayoutBuilder(
+                        builder: (context, constraints) {
+                          List<dynamic> visproducts = Storage.products;
+                          /*visproducts = visproducts.where((e) {
+                  if (e['name']
+                      .toString()
+                      .toLowerCase()
+                      .contains(search.toLowerCase()))
+                    return true;
+                  else
+                    return false;
+                else {
+                  print(e['category']);
+                  if (e['name']
+                          .toString()
+                          .toLowerCase()
+                          .contains(search.toLowerCase()) &&
+                      e['category'] == viewCat)
+                    return true;
+                  else
+                    return false;
+                }
+              }).toList();*/
+                          if (visproducts.length != 0) {
+                            if (constraints.maxWidth <= 600) {
+                              return GridView.count(
+                                physics: BouncingScrollPhysics(),
+                                crossAxisCount: 2,
+                                shrinkWrap: true,
+                                childAspectRatio: 0.72,
+                                children:
+                                    List.generate(visproducts.length, (index) {
+                                  /*return ProductItem(
+                        snap: visproducts[index],
+                        hw: false,
+                      );*/
+                                  return ProductCard(
+                                    hw: false,
+                                    snap: visproducts[index],
+                                  );
+                                }),
+                              );
+                            } else {
+                              return GridView.count(
+                                physics: BouncingScrollPhysics(),
+                                crossAxisCount: 4,
+                                shrinkWrap: true,
+                                childAspectRatio: 0.68,
+                                children:
+                                    List.generate(visproducts.length, (index) {
+                                  return ProductCard(
+                                    snap: visproducts[index],
+                                    hw: false,
+                                  );
+                                }),
+                              );
+                            }
+                          } else {
+                            return Center(
+                                child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 32),
+                              child: Text('No Products'),
+                            ));
+                          }
+                        },
+                      )
+                    : Center(
+                        child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        child: Text('No Products'),
+                      )),
+              ),
+      ),
+    );
+  }
+
+  Route createRoute(dest) {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 500),
+      pageBuilder: (context, animation, secondaryAnimation) => dest,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(0, 1);
+        var end = Offset.zero;
+        var curve = Curves.fastOutSlowIn;
+
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
+  }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+}
+/*Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: List.generate(categories.length, (i) {
                     if (categories[i] == categories[0]) {
@@ -154,33 +255,4 @@ class _ProductsScreenState extends State<ProductsScreen>
                       );
                     }
                   }).toList(),
-                ),
-              ),
-      ),
-    );
-  }
-
-  Route createRoute(dest) {
-    return PageRouteBuilder(
-      transitionDuration: Duration(milliseconds: 500),
-      pageBuilder: (context, animation, secondaryAnimation) => dest,
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var begin = Offset(0, 1);
-        var end = Offset.zero;
-        var curve = Curves.fastOutSlowIn;
-
-        var tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
-    );
-  }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => true;
-}
+                )*/

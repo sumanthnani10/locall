@@ -5,9 +5,9 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class TitleText extends StatelessWidget {
   String title;
-  bool cart;
+  bool cart, back;
 
-  TitleText(this.title, {this.cart});
+  TitleText(this.title, {this.cart, this.back = false});
 
   @override
   Widget build(BuildContext context) {
@@ -17,17 +17,31 @@ class TitleText extends StatelessWidget {
         child: Stack(
           alignment: Alignment.topLeft,
           children: <Widget>[
-            Text(
+            /*Text(
               title,
               style: TextStyle(
                   color: Colors.white38,
                   fontWeight: FontWeight.w800,
                   fontSize: 56),
-            ),
+            ),*/
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                if (back)
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                        size: 28,
+                      ),
+                    ),
+                  ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
                   child: Text(
@@ -39,6 +53,7 @@ class TitleText extends StatelessWidget {
                     ),
                   ),
                 ),
+                Spacer(),
                 if (!cart)
                   FlatButton.icon(
                     onPressed: () {

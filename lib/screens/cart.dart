@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:locall/containers/title_text.dart';
 import 'package:locall/screens/address_screen.dart';
+import 'package:locall/service/notification_handler.dart';
 import 'package:locall/storage.dart';
 
 class Cart extends StatefulWidget {
@@ -23,27 +24,11 @@ class _CartState extends State<Cart> {
     ml.length = 0;
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: Row(
-          children: <Widget>[
-            InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
-                  size: 28,
-                ),
-              ),
-            ),
-            TitleText(
-              'Cart',
-              cart: true,
-            ),
-          ],
+        preferredSize: Size.fromHeight(72),
+        child: TitleText(
+          'Cart',
+          cart: true,
+          back: true,
         ),
       ),
       body: Padding(
@@ -57,13 +42,8 @@ class _CartState extends State<Cart> {
                       var t;
                       String id = '${Storage.cart[i].documentID}';
                       int pn = Storage.cart[i]['price_num'];
-                      if ((t = Storage.products.singleWhere((element) {
-                            return element.documentID ==
-                                Storage.cart[i]['product_id'];
-                          }, orElse: () {
-                            return null;
-                          })) !=
-                          null) {
+                      t = Storage.productsMap[Storage.cart[i]['product_id']];
+                      if (t != null) {
                         products[id] = t.data;
                         products[id].addAll(Storage.cart[i].data);
                         if (tl.length > i) {
@@ -217,7 +197,8 @@ class _CartState extends State<Cart> {
                                     setState(() {});
                                     await Firestore.instance
                                         .collection('users')
-                                        .document('${Storage.user['customer_id']}')
+                                        .document(
+                                            '${Storage.user['customer_id']}')
                                         .collection('grocery_cart')
                                         .document(Storage.cart[i].documentID)
                                         .updateData({
@@ -259,7 +240,8 @@ class _CartState extends State<Cart> {
                                       setState(() {});
                                       await Firestore.instance
                                           .collection('users')
-                                          .document('${Storage.user['customer_id']}')
+                                          .document(
+                                              '${Storage.user['customer_id']}')
                                           .collection('grocery_cart')
                                           .document(Storage.cart[i].documentID)
                                           .updateData({
@@ -271,7 +253,8 @@ class _CartState extends State<Cart> {
                                       setState(() {});
                                       await Firestore.instance
                                           .collection('users')
-                                          .document('${Storage.user['customer_id']}')
+                                          .document(
+                                              '${Storage.user['customer_id']}')
                                           .collection('grocery_cart')
                                           .document(Storage.cart[i].documentID)
                                           .delete();
@@ -325,26 +308,25 @@ class _CartState extends State<Cart> {
                           ),
                         ],
                       ),
-                      Row(
-                        children: <Widget>[
-                          Text(
-                            mrp.toString(),
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.red,
-                              decoration: TextDecoration.lineThrough,
-                            ),
-                          ),
-                          Text(
-                              mrp != 0
-                                  ? ' (You Save: ${(((mrp - total) / mrp) * 100).round()}%)'
-                                  : '',
+                      if (mrp != total)
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              mrp.toString(),
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.green,
-                              )),
-                        ],
-                      ),
+                                color: Colors.red,
+                                decoration: TextDecoration.lineThrough,
+                              ),
+                            ),
+                            Text(
+                                ' (You Save: ${(((mrp - total) / mrp) * 100).round()}%)',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.green,
+                                )),
+                          ],
+                        ),
                     ],
                   ),
                   Spacer(),
@@ -354,7 +336,81 @@ class _CartState extends State<Cart> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                       color: Colors.greenAccent,
-                      onPressed: () {
+                      onPressed: () async {
+                        /*showLoadingDialog(context, 'Placing Order');
+                        List<Map<String, dynamic>> cart =
+                        new List<Map<String, dynamic>>();
+
+                        Storage.cart.forEach((element) {
+                          cart.add(element.data);
+                        });
+
+                        String ntoken =
+                            await NotificationHandler.instance.init(context);
+
+                        Map<String, dynamic> order = {
+                          'products': cart,
+                          'details': {
+                            'customer_id': Storage.user['customer_id'],
+                            'type': 'grocery',
+                            'provider_id': 'isnapur_grocery_sairam',
+                            'stage': 'Order Placed',
+                          },
+                          'time': {'order_placed': Timestamp.now()},
+                          'price': {
+                            'total': widget.total,
+                            'mrp': widget.mrp,
+                            'saved': widget.saved,
+                          },
+                          'notification_id': ntoken,
+                          'length': Storage.cart.length,
+                          'address': custAddress,
+                          'location': {
+                            'lat': custLoc.latitude,
+                            'long': custLoc.longitude,
+                          }
+                        };
+                        await Firestore.instance.collection('orders').add({}).then(
+                                (value) async =>
+                            order['order_id'] = await value.documentID);
+                        await Firestore.instance
+                            .collection('orders')
+                            .document(order['order_id'])
+                            .setData(order);
+
+                        await Firestore.instance
+                            .collection('users')
+                            .document(Storage.user['customer_id'])
+                            .updateData({
+                          'address': custAddress,
+                          'location': {
+                            'lat': custLoc.latitude,
+                            'long': custLoc.longitude,
+                          },
+                          'notification_id': ntoken
+                        });
+
+                        var l = Storage.cart;
+                        l.forEach((e) async {
+                          await Firestore.instance
+                              .collection('users')
+                              .document(Storage.user['customer_id'])
+                              .collection('grocery_cart')
+                              .document(e.documentID)
+                              .delete();
+                        });
+//                    order['time']['order_placed'] = Timestamp.now();
+                        await NotificationHandler.instance.sendMessage(
+                            'New Order',
+                            "You got a new Order.",
+                            Storage.area_details['groceries']
+                            ['notification_token']);
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        Navigator.of(context)
+                            .push(createRoute(GroceryOrder(order)));*/
+
                         Navigator.push(
                             context,
                             createRoute(AddressScreen(
