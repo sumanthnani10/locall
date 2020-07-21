@@ -27,7 +27,6 @@ class GroceryOrder extends StatelessWidget {
         progress = 1;
         break;
     }
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -357,107 +356,9 @@ class GroceryOrder extends StatelessWidget {
                                     'Qty: ${order['products'][i]['quantity']}',
                                     style: TextStyle(fontSize: 12),
                                   ),
-                                  /*Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    Storage.productsMap[order['products']
-                                                        [i]['product_id']]
-                                                    ['quantity_${pn}']
-                                                .toString() !=
-                                            '0'
-                                        ? 'Rs.${Storage.productsMap[order['products'][i]['product_id']]['price_${pn}']}/${Storage.productsMap[order['products'][i]['product_id']]['quantity_${pn}']}${Storage.productsMap[order['products'][i]['product_id']]['unit_${pn}']}'
-                                        : 'Rs.${Storage.productsMap[order['products'][i]['product_id']]['price_${pn}']}',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.black),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                  if (Storage.productsMap[
-                                          order['products'][i]
-                                              ['product_id']]['price_${pn}'] !=
-                                      Storage.productsMap[
-                                          order['products'][i]
-                                              ['product_id']]['mrp_${pn}'])
-                                    Row(
-                                      children: <Widget>[
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text(
-                                          'Rs.${Storage.productsMap[order['products'][i]['product_id']]['mrp_${pn}']}',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.red,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              decorationColor: Colors.black),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        ),
-                                        SizedBox(
-                                          width: 4,
-                                        ),
-                                        Text(
-                                          '(${((Storage.productsMap[order['products'][i]['product_id']]['mrp_${pn}'] - Storage.productsMap[order['products'][i]['product_id']]['price_${pn}']) / Storage.productsMap[order['products'][i]['product_id']]['mrp_${pn}'] * 100).round()}%)',
-                                          style: TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.green,
-                                              fontWeight: FontWeight.w600),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                        ),
-                                      ],
-                                    )
-                                ],
-                              ),
-                              Spacer(),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  RupeeText(
-                                    amount: Storage.productsMap[
-                                            order['products'][i]
-                                                ['product_id']]['price_${pn}'] *
-                                        order['products'][i]['quantity'],
-                                    size: 18,
-                                    color: Colors.green[800],
-                                  ),
-                                  SizedBox(
-                                    width: 4,
-                                  ),
-                                  Text(
-                                    (Storage.productsMap[widget
-                                                    .order['products'][i]
-                                                ['product_id']]['mrp_${pn}'] *
-                                            order['products'][i]
-                                                ['quantity'])
-                                        .toString(),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.red,
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  )
-                                ],
-                              ),*/
                                 ],
                               ),
                             ),
-                            /*Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              'Qty',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            Text(
-                              '${order['products'][i]['quantity']}',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ],
-                        )*/
                           ],
                         ),
                       ),
@@ -471,22 +372,25 @@ class GroceryOrder extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(12), topRight: Radius.circular(12))),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            Text('Total:  '),
             Row(
               children: <Widget>[
-                Text('Total:  '),
                 RupeeText(
                   amount: order['price']['total'],
                   color: Colors.green,
                   fontWeight: FontWeight.w800,
-                  size: 24,
+                  size: order['price']['delivery'] != 0 ? 24 : 22,
                 ),
+                if (order['price']['delivery'] != 0)
+                  Text(
+                    ' + Rs.${order['price']['delivery']} (Delivery)',
+                    style: TextStyle(fontSize: 14),
+                  ),
               ],
-            ),
-            SizedBox(
-              width: 8,
             ),
             Row(
               children: <Widget>[

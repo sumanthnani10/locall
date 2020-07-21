@@ -6,6 +6,8 @@ import 'package:locall/screens/address_screen.dart';
 import 'package:locall/service/notification_handler.dart';
 import 'package:locall/storage.dart';
 
+import 'grocery_order.dart';
+
 class Cart extends StatefulWidget {
   @override
   _CartState createState() => _CartState();
@@ -17,6 +19,7 @@ class _CartState extends State<Cart> {
   List<int> ml = new List<int>();
   int total = 0, mrp = 0;
   bool loading = false;
+  int delivery = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +62,15 @@ class _CartState extends State<Cart> {
                         }
                         mrp = ml.fold(0, (p, c) => p + c);
                         total = tl.fold(0, (p, c) => p + c);
+                        if (total >= 1500) {
+                          delivery = 0;
+                        } else {
+                          if (Storage.user['grocery']['distance'] <= 1000) {
+                            delivery = 25;
+                          } else {
+                            delivery = 40;
+                          }
+                        }
                       }
                       return Container(
                         padding: const EdgeInsets.all(4),
@@ -295,16 +307,23 @@ class _CartState extends State<Cart> {
               child: Row(
                 children: <Widget>[
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
+                      Text('Total:  '),
                       Row(
                         children: <Widget>[
-                          Text('Total:  '),
                           RupeeText(
                             amount: total,
                             color: Colors.green,
                             fontWeight: FontWeight.w800,
-                            size: 24,
+                            size: 22,
+                          ),
+                          Text(
+                            delivery == 0
+                                ? ' (Free Delivery)'
+                                : ' + Rs.$delivery (Delivery)',
+                            style: TextStyle(fontSize: 14),
                           ),
                         ],
                       ),
@@ -337,9 +356,9 @@ class _CartState extends State<Cart> {
                           borderRadius: BorderRadius.circular(8)),
                       color: Colors.greenAccent,
                       onPressed: () async {
-                        /*showLoadingDialog(context, 'Placing Order');
+                        showLoadingDialog(context, 'Placing Order');
                         List<Map<String, dynamic>> cart =
-                        new List<Map<String, dynamic>>();
+                            new List<Map<String, dynamic>>();
 
                         Storage.cart.forEach((element) {
                           cart.add(element.data);
@@ -358,21 +377,18 @@ class _CartState extends State<Cart> {
                           },
                           'time': {'order_placed': Timestamp.now()},
                           'price': {
-                            'total': widget.total,
-                            'mrp': widget.mrp,
-                            'saved': widget.saved,
+                            'total': total,
+                            'mrp': mrp,
+                            'saved': (((mrp - total) / mrp) * 100).round(),
+                            'delivery': delivery
                           },
                           'notification_id': ntoken,
                           'length': Storage.cart.length,
-                          'address': custAddress,
-                          'location': {
-                            'lat': custLoc.latitude,
-                            'long': custLoc.longitude,
-                          }
                         };
-                        await Firestore.instance.collection('orders').add({}).then(
-                                (value) async =>
-                            order['order_id'] = await value.documentID);
+                        await Firestore.instance
+                            .collection('orders')
+                            .add({}).then((value) async =>
+                                order['order_id'] = await value.documentID);
                         await Firestore.instance
                             .collection('orders')
                             .document(order['order_id'])
@@ -381,14 +397,7 @@ class _CartState extends State<Cart> {
                         await Firestore.instance
                             .collection('users')
                             .document(Storage.user['customer_id'])
-                            .updateData({
-                          'address': custAddress,
-                          'location': {
-                            'lat': custLoc.latitude,
-                            'long': custLoc.longitude,
-                          },
-                          'notification_id': ntoken
-                        });
+                            .updateData({'notification_id': ntoken});
 
                         var l = Storage.cart;
                         l.forEach((e) async {
@@ -404,19 +413,19 @@ class _CartState extends State<Cart> {
                             'New Order',
                             "You got a new Order.",
                             Storage.area_details['groceries']
-                            ['notification_token']);
+                                ['notification_token']);
                         Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.of(context)
-                            .push(createRoute(GroceryOrder(order)));*/
+                            .push(createRoute(GroceryOrder(order)));
 
-                        Navigator.push(
+                        /*Navigator.push(
                             context,
                             createRoute(AddressScreen(
                                 total: total,
                                 mrp: mrp,
-                                saved: (((mrp - total) / mrp) * 100).round())));
+                                saved: (((mrp - total) / mrp) * 100).round())));*/
                       },
                       icon: Icon(
                         Icons.done_all,

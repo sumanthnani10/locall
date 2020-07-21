@@ -48,7 +48,7 @@ class _ProfileState extends State<Profile> {
                     style: TextStyle(fontSize: 16),
                   ),
                   Text(
-                    '${Storage.user['area']}',
+                    '${Storage.user['grocery']['area']}',
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
                 ],
@@ -90,7 +90,7 @@ class _ProfileState extends State<Profile> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     child: Text(
-                      '${Storage.user['first_name']} ${Storage.user['last_name']}\n${Storage.user['address'] ?? 'No Address'}',
+                      '${Storage.user['first_name']} ${Storage.user['last_name']}\n${Storage.user['grocery']['address'] ?? 'No Address'}',
                       style: TextStyle(fontSize: 12),
                     ),
                   ),
