@@ -13,29 +13,28 @@ class ProductsScreen extends StatefulWidget {
 class _ProductsScreenState extends State<ProductsScreen>
     with AutomaticKeepAliveClientMixin {
   List<String> categories = [
-    'New Arrivals',
-    'Atta & Flour',
-    'Beverages',
-    'Body Sprays',
-    'Chocolates',
-    'Cleaners',
-    'Dals & Pulses',
-    'Dairy',
     'Dry Fruits',
+    'Rice & Rice Products',
     'Edible Oils',
+    'Spices',
+    'Dals & Pulses',
+    'Atta & Flour',
+    'Salt, Sugar & Tea',
+    'Pooja Products',
+    'Body Sprays',
+    'Soaps and Shampoo',
+    'Personal Hygiene',
+    'Snacks and Food',
     'Hair Oils',
     'Masala',
-    'Patanjali',
-    'Personal Hygiene',
-    'Pooja Products',
-    'Rice & Rice Products',
-    'Salt, Sugar & Tea',
-    'Snacks and Food',
-    'Soaps and Shampoo',
-    'Spices',
-    'Stationary',
-    'Vegetables',
+    'Cleaners',
+    'Chocolates',
+    'Beverages',
     'Others',
+    'Vegetables',
+    'Stationary',
+    'Dairy',
+    'Patanjali',
   ];
 
   List<dynamic> t;
@@ -57,80 +56,83 @@ class _ProductsScreenState extends State<ProductsScreen>
                   LinearProgressIndicator(),
                 ],
               )
-            : Container(
-                padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
-                child: Storage.products.length != 0
-                    ? LayoutBuilder(
-                        builder: (context, constraints) {
-                          List<dynamic> visproducts = Storage.products;
-                          /*visproducts = visproducts.where((e) {
-                  if (e['name']
+            : SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
+                  child: Storage.products.length != 0
+                      ? LayoutBuilder(
+                          builder: (context, constraints) {
+                            List<dynamic> visproducts = Storage.products;
+                            /*visproducts = visproducts.where((e) {
+                    if (e['name']
                       .toString()
                       .toLowerCase()
                       .contains(search.toLowerCase()))
-                    return true;
-                  else
-                    return false;
-                else {
-                  print(e['category']);
-                  if (e['name']
+                          return true;
+                    else
+                          return false;
+                  else {
+                    print(e['category']);
+                    if (e['name']
                           .toString()
                           .toLowerCase()
                           .contains(search.toLowerCase()) &&
                       e['category'] == viewCat)
-                    return true;
-                  else
-                    return false;
-                }
-              }).toList();*/
-                          if (visproducts.length != 0) {
-                            if (constraints.maxWidth <= 600) {
-                              return GridView.count(
-                                physics: BouncingScrollPhysics(),
-                                crossAxisCount: 2,
-                                shrinkWrap: true,
-                                childAspectRatio: 0.72,
-                                children:
-                                    List.generate(visproducts.length, (index) {
-                                  /*return ProductItem(
+                          return true;
+                    else
+                          return false;
+                  }
+                }).toList();*/
+                            if (visproducts.length != 0) {
+                              if (constraints.maxWidth <= 600) {
+                                return GridView.count(
+                                  physics: BouncingScrollPhysics(),
+                                  crossAxisCount: 2,
+                                  shrinkWrap: true,
+                                  childAspectRatio: 0.72,
+                                  children: List.generate(visproducts.length,
+                                      (index) {
+                                    /*return ProductItem(
                         snap: visproducts[index],
                         hw: false,
                       );*/
-                                  return ProductCard(
-                                    hw: false,
-                                    snap: visproducts[index],
-                                  );
-                                }),
-                              );
+                                    return ProductCard(
+                                      hw: false,
+                                      snap: visproducts[index],
+                                    );
+                                  }),
+                                );
+                              } else {
+                                return GridView.count(
+                                  physics: BouncingScrollPhysics(),
+                                  crossAxisCount: 4,
+                                  shrinkWrap: true,
+                                  childAspectRatio: 0.68,
+                                  children: List.generate(visproducts.length,
+                                      (index) {
+                                    return ProductCard(
+                                      snap: visproducts[index],
+                                      hw: false,
+                                    );
+                                  }),
+                                );
+                              }
                             } else {
-                              return GridView.count(
-                                physics: BouncingScrollPhysics(),
-                                crossAxisCount: 4,
-                                shrinkWrap: true,
-                                childAspectRatio: 0.68,
-                                children:
-                                    List.generate(visproducts.length, (index) {
-                                  return ProductCard(
-                                    snap: visproducts[index],
-                                    hw: false,
-                                  );
-                                }),
-                              );
+                              return Center(
+                                  child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 32),
+                                child: Text('No Products'),
+                              ));
                             }
-                          } else {
-                            return Center(
-                                child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 32),
-                              child: Text('No Products'),
-                            ));
-                          }
-                        },
-                      )
-                    : Center(
-                        child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 32),
-                        child: Text('No Products'),
-                      )),
+                          },
+                        )
+                      : Center(
+                          child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 32),
+                          child: Text('No Products'),
+                        )),
+                ),
               ),
       ),
     );

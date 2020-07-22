@@ -68,10 +68,90 @@ class _BottomNavBarState extends State<BottomNavBar>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(72),
-        child: TitleText(
-          appBarTitle,
-          cart: false,
+        preferredSize: Size.fromHeight(96),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TitleText(
+              appBarTitle,
+              cart: false,
+            ),
+            if (sel == 1)
+              Padding(
+                padding: const EdgeInsets.only(left: 4.0),
+                child: SingleChildScrollView(
+                  child: Row(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                color: Colors.black12,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
+                                borderRadius: BorderRadius.circular(8)),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.search,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  'Search',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w800),
+                                ),
+                              ],
+                            )),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                color: Colors.black12,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
+                                borderRadius: BorderRadius.circular(8)),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.filter_list,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                                SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  'Filter',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w800),
+                                ),
+                              ],
+                            )),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
       backgroundColor: Color(0xffa6e553),

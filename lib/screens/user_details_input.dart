@@ -2,9 +2,11 @@ import 'package:android_intent/android_intent.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:locall/screens/splash_screen.dart';
 import 'package:locall/service/notification_handler.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:locall/storage.dart';
 
 class UserDetailsInput extends StatefulWidget {
@@ -17,10 +19,12 @@ class UserDetailsInput extends StatefulWidget {
   _UserDetailsInputState createState() => _UserDetailsInputState();
 }
 
-class _UserDetailsInputState extends State<UserDetailsInput> {
+class _UserDetailsInputState extends State<UserDetailsInput>
+    with AutomaticKeepAliveClientMixin {
   TextEditingController fname_controller = new TextEditingController();
   TextEditingController lname_controller = new TextEditingController();
   String fname = '', lname = '', location = '';
+  final homeScaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController addressc = new TextEditingController();
   GoogleMapController map;
 
@@ -32,7 +36,7 @@ class _UserDetailsInputState extends State<UserDetailsInput> {
   Marker custMarker;
   String custAddress;
   int c = 0;
-  ValueNotifier<bool> deliverable = ValueNotifier<bool>(true);
+  ValueNotifier<bool> deliverable = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -59,7 +63,7 @@ class _UserDetailsInputState extends State<UserDetailsInput> {
         actions: <Widget>[
           FlatButton(
             onPressed: () async {
-              if (fname != '' && lname != '') {
+              if (fname != '' && lname != '' && custAddress != '') {
                 if (deliverable.value) {
                   showLoadingDialog(context, 'Uploading');
                   String t = await NotificationHandler.instance.init(context);
@@ -195,27 +199,65 @@ class _UserDetailsInputState extends State<UserDetailsInput> {
                         Container(
                           height: 200,
                           width: 330,
-                          child: GoogleMap(
-                            key: UniqueKey(),
-                            markers: {custMarker},
-                            mapType: MapType.normal,
-                            buildingsEnabled: true,
-                            rotateGesturesEnabled: true,
-                            zoomGesturesEnabled: true,
-                            myLocationEnabled: true,
-                            onLongPress: (lloc) {
-                              custLoc = lloc;
-                              moveToLocation(lloc);
-                              setState(() {});
-                            },
-                            initialCameraPosition: CameraPosition(
-                                target: LatLng(
-                                    17.406622914697873, 78.48532670898436),
-                                zoom: 10.9),
-                            onMapCreated: (c) {
-                              map = c;
-                              getCurrentLocation();
-                            },
+                          child: Stack(
+                            children: <Widget>[
+                              GoogleMap(
+                                key: UniqueKey(),
+                                markers: {custMarker},
+                                mapType: MapType.normal,
+                                buildingsEnabled: true,
+                                rotateGesturesEnabled: true,
+                                zoomGesturesEnabled: true,
+                                myLocationEnabled: true,
+                                onLongPress: (lloc) {
+                                  custLoc = lloc;
+                                  moveToLocation(lloc);
+                                  setState(() {});
+                                },
+                                initialCameraPosition: CameraPosition(
+                                    target: LatLng(
+                                        17.406622914697873, 78.48532670898436),
+                                    zoom: 10.9),
+                                onMapCreated: (c) {
+                                  map = c;
+                                  getCurrentLocation();
+                                },
+                                myLocationButtonEnabled: true,
+                                zoomControlsEnabled: true,
+                              ),
+                              Positioned(
+                                  left: 4,
+                                  top: 4,
+                                  child: InkWell(
+                                    onTap: () async {
+                                      Prediction p =
+                                          await PlacesAutocomplete.show(
+                                              context: context,
+                                              apiKey:
+                                                  "AIzaSyD3Mp-nbpxvDIUmjL9MWCDil6AypsFcCVQ",
+                                              mode: Mode.overlay,
+                                              // Mode.fullscreen
+                                              language: "en",
+                                              components: [
+                                            new Component(
+                                                Component.country, "in")
+                                          ]);
+                                      locselect(p, homeScaffoldKey);
+                                    },
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                        padding: const EdgeInsets.all(4),
+                                        child: Text(
+                                          'Search',
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w800),
+                                        )),
+                                  ))
+                            ],
                           ),
                         ),
                         Container(
@@ -263,6 +305,23 @@ class _UserDetailsInputState extends State<UserDetailsInput> {
         ),
       ),
     );
+  }
+
+  Future<Null> locselect(
+      Prediction p, GlobalKey<ScaffoldState> homeScaffoldKey) async {
+    if (p != null) {
+      PlacesDetailsResponse detailsResponse = await GoogleMapsPlaces(
+              apiKey: "AIzaSyD3Mp-nbpxvDIUmjL9MWCDil6AypsFcCVQ")
+          .getDetailsByPlaceId(p.placeId);
+      custLoc = new LatLng(detailsResponse.result.geometry.location.lat,
+          detailsResponse.result.geometry.location.lng);
+      setState(() {
+        custAddress = p.description;
+        addressc.text = custAddress;
+      });
+      moveToLocation(new LatLng(detailsResponse.result.geometry.location.lat,
+          detailsResponse.result.geometry.location.lng));
+    }
   }
 
   Future<void> getCurrentLocation() async {
@@ -454,4 +513,7 @@ class _UserDetailsInputState extends State<UserDetailsInput> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
