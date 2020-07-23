@@ -6,8 +6,9 @@ import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 class TitleText extends StatelessWidget {
   String title;
   bool cart, back;
+  double textSize;
 
-  TitleText(this.title, {this.cart, this.back = false});
+  TitleText(this.title, {this.cart, this.back = false, this.textSize = 32});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,9 @@ class TitleText extends StatelessWidget {
             ),*/
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: textSize == 32
+                  ? CrossAxisAlignment.start
+                  : CrossAxisAlignment.center,
               children: <Widget>[
                 if (back)
                   InkWell(
@@ -48,7 +51,7 @@ class TitleText extends StatelessWidget {
                     title,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 32,
+                      fontSize: textSize,
                       fontWeight: FontWeight.w800,
                     ),
                   ),

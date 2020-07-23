@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:locall/screens/bottom_nav.dart';
-import 'package:locall/screens/login.dart';
 import 'package:locall/screens/splash_screen.dart';
 import 'package:overlay_support/overlay_support.dart';
 

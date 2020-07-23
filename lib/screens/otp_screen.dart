@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:locall/screens/splash_screen.dart';
-import 'package:locall/screens/user_details_input.dart';
 
 class OtpScreen extends StatefulWidget {
   String phoneNumber;

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:locall/containers/title_text.dart';
-import 'package:locall/screens/address_screen.dart';
 import 'package:locall/service/notification_handler.dart';
 import 'package:locall/storage.dart';
 
@@ -50,14 +49,14 @@ class _CartState extends State<Cart> {
                         products[id] = t.data;
                         products[id].addAll(Storage.cart[i].data);
                         if (tl.length > i) {
-                          tl[i] = (products[id]['price_${pn}'] *
+                          tl[i] = (products[id]['price_$pn'] *
                               products[id]['quantity']);
-                          ml[i] = (products[id]['mrp_${pn}'] *
+                          ml[i] = (products[id]['mrp_$pn'] *
                               products[id]['quantity']);
                         } else {
-                          tl.add(products[id]['price_${pn}'] *
+                          tl.add(products[id]['price_$pn'] *
                               products[id]['quantity']);
-                          ml.add(products[id]['mrp_${pn}'] *
+                          ml.add(products[id]['mrp_$pn'] *
                               products[id]['quantity']);
                         }
                         mrp = ml.fold(0, (p, c) => p + c);
@@ -122,25 +121,25 @@ class _CartState extends State<Cart> {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        products[id]['quantity_${pn}']
+                                        products[id]['quantity_$pn']
                                                     .toString() !=
                                                 '0'
-                                            ? 'Rs.${products[id]['price_${pn}']}/${products[id]['quantity_${pn}']}${products[id]['unit_${pn}']}'
-                                            : 'Rs.${products[id]['price_${pn}']}',
+                                            ? 'Rs.${products[id]['price_$pn']}/${products[id]['quantity_$pn']}${products[id]['unit_$pn']}'
+                                            : 'Rs.${products[id]['price_$pn']}',
                                         style: TextStyle(
                                             fontSize: 12, color: Colors.black),
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                       ),
-                                      if (products[id]['price_${pn}'] !=
-                                          products[id]['mrp_${pn}'])
+                                      if (products[id]['price_$pn'] !=
+                                          products[id]['mrp_$pn'])
                                         Row(
                                           children: <Widget>[
                                             SizedBox(
                                               width: 4,
                                             ),
                                             Text(
-                                              'Rs.${products[id]['mrp_${pn}']}',
+                                              'Rs.${products[id]['mrp_$pn']}',
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: Colors.red,
@@ -155,7 +154,7 @@ class _CartState extends State<Cart> {
                                               width: 4,
                                             ),
                                             Text(
-                                              '(${((products[id]['mrp_${pn}'] - products[id]['price_${pn}']) / products[id]['mrp_${pn}'] * 100).round()}%)',
+                                              '(${((products[id]['mrp_$pn'] - products[id]['price_$pn']) / products[id]['mrp_$pn'] * 100).round()}%)',
                                               style: TextStyle(
                                                   fontSize: 10,
                                                   color: Colors.green,
@@ -173,7 +172,7 @@ class _CartState extends State<Cart> {
                                         CrossAxisAlignment.center,
                                     children: <Widget>[
                                       RupeeText(
-                                        amount: products[id]['price_${pn}'] *
+                                        amount: products[id]['price_$pn'] *
                                             Storage.cart[i]['quantity'],
                                         size: 18,
                                         color: Colors.green[800],
@@ -182,7 +181,7 @@ class _CartState extends State<Cart> {
                                         width: 4,
                                       ),
                                       Text(
-                                        (products[id]['mrp_${pn}'] *
+                                        (products[id]['mrp_$pn'] *
                                                 Storage.cart[i]['quantity'])
                                             .toString(),
                                         style: TextStyle(
@@ -359,9 +358,11 @@ class _CartState extends State<Cart> {
                         showLoadingDialog(context, 'Placing Order');
                         List<Map<String, dynamic>> cart =
                             new List<Map<String, dynamic>>();
+                        List<String> pids = new List<String>();
 
                         Storage.cart.forEach((element) {
                           cart.add(element.data);
+                          pids.add(element.data['product_id']);
                         });
 
                         String ntoken =
@@ -388,16 +389,19 @@ class _CartState extends State<Cart> {
                         await Firestore.instance
                             .collection('orders')
                             .add({}).then((value) async =>
-                                order['order_id'] = await value.documentID);
+                                order['order_id'] = value.documentID);
                         await Firestore.instance
                             .collection('orders')
                             .document(order['order_id'])
                             .setData(order);
-
                         await Firestore.instance
                             .collection('users')
                             .document(Storage.user['customer_id'])
-                            .updateData({'notification_id': ntoken});
+                            .updateData({
+                          'notification_id': ntoken,
+                          'grocery_ordered_products':
+                              FieldValue.arrayUnion(pids)
+                        });
 
                         var l = Storage.cart;
                         l.forEach((e) async {
@@ -414,7 +418,6 @@ class _CartState extends State<Cart> {
                             "You got a new Order.",
                             Storage.area_details['groceries']
                                 ['notification_token']);
-                        Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.of(context)

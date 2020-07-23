@@ -67,7 +67,7 @@ class GroceryOrderContainer extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${itemnumbers} items',
+                  '$itemnumbers items',
                   overflow: TextOverflow.ellipsis,
                   softWrap: true,
                   style: TextStyle(
@@ -96,7 +96,7 @@ class GroceryOrderContainer extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      'Rs.${total}',
+                      'Rs.$total',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       softWrap: true,

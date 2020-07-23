@@ -13,6 +13,30 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   bool gotDetails = false;
+  List<String> categories = [
+    'Dry Fruits',
+    'Rice & Rice Products',
+    'Edible Oils',
+    'Spices',
+    'Dals & Pulses',
+    'Atta & Flour',
+    'Salt, Sugar & Tea',
+    'Pooja Products',
+    'Body Sprays',
+    'Soaps and Shampoo',
+    'Personal Hygiene',
+    'Snacks and Food',
+    'Hair Oils',
+    'Masala',
+    'Cleaners',
+    'Chocolates',
+    'Beverages',
+    'Others',
+    'Vegetables',
+    'Stationary',
+    'Dairy',
+    'Patanjali',
+  ];
 
   @override
   void initState() {
@@ -58,6 +82,10 @@ class _SplashScreenState extends State<SplashScreen> {
             Storage.products.forEach((element) {
               Storage.productsMap[element.documentID] = element;
             });
+            Storage.products.sort((a, b) {
+              return categories.indexOf(a['category']) -
+                  categories.indexOf(b['category']);
+            });
           });
           Navigator.of(context).pushReplacement(createRoute(BottomNavBar()));
         }
@@ -77,8 +105,8 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               Text(
-                'LoCall',
-                style: TextStyle(color: Colors.lightBlue, fontSize: 64),
+                'Avashyaa',
+                style: TextStyle(color: Color(0xff34ca08), fontSize: 64),
               ),
               Container(width: 150, child: LinearProgressIndicator())
             ],

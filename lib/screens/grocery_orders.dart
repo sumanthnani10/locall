@@ -242,8 +242,7 @@ class _GroceryOrdersState extends State<GroceryOrders> {
                         case 'Rejected':
                           c = 4;
                           break;
-                      }
-                      ;
+                      };
                       String items = '';
                       snap['products'].forEach((e) {
                         items +=

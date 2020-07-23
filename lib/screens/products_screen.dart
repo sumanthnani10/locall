@@ -37,10 +37,24 @@ class _ProductsScreenState extends State<ProductsScreen>
     'Patanjali',
   ];
 
-  List<dynamic> t;
+  List<String> sortList = [
+    'Default',
+    'Name - A->Z',
+    'Name - Z->A',
+    'Latest',
+    'Oldest',
+  ];
+  int sort = 0;
+  List<dynamic> allproducts, visproducts;
+  List<String> filterCats = new List<String>();
+
+  String search = '';
+  TextEditingController search_controller = new TextEditingController();
+  bool searching = false;
 
   @override
   void initState() {
+    allproducts = Storage.products.sublist(0);
     super.initState();
   }
 
@@ -56,82 +70,564 @@ class _ProductsScreenState extends State<ProductsScreen>
                   LinearProgressIndicator(),
                 ],
               )
-            : SingleChildScrollView(
-                child: Container(
-                  padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
-                  child: Storage.products.length != 0
-                      ? LayoutBuilder(
-                          builder: (context, constraints) {
-                            List<dynamic> visproducts = Storage.products;
-                            /*visproducts = visproducts.where((e) {
-                    if (e['name']
-                      .toString()
-                      .toLowerCase()
-                      .contains(search.toLowerCase()))
-                          return true;
-                    else
-                          return false;
-                  else {
-                    print(e['category']);
-                    if (e['name']
-                          .toString()
-                          .toLowerCase()
-                          .contains(search.toLowerCase()) &&
-                      e['category'] == viewCat)
-                          return true;
-                    else
-                          return false;
-                  }
-                }).toList();*/
-                            if (visproducts.length != 0) {
-                              if (constraints.maxWidth <= 600) {
-                                return GridView.count(
-                                  physics: BouncingScrollPhysics(),
-                                  crossAxisCount: 2,
-                                  shrinkWrap: true,
-                                  childAspectRatio: 0.72,
-                                  children: List.generate(visproducts.length,
-                                      (index) {
-                                    /*return ProductItem(
-                        snap: visproducts[index],
-                        hw: false,
-                      );*/
-                                    return ProductCard(
-                                      hw: false,
-                                      snap: visproducts[index],
-                                    );
-                                  }),
-                                );
-                              } else {
-                                return GridView.count(
-                                  physics: BouncingScrollPhysics(),
-                                  crossAxisCount: 4,
-                                  shrinkWrap: true,
-                                  childAspectRatio: 0.68,
-                                  children: List.generate(visproducts.length,
-                                      (index) {
-                                    return ProductCard(
-                                      snap: visproducts[index],
-                                      hw: false,
-                                    );
-                                  }),
-                                );
-                              }
-                            } else {
-                              return Center(
+            : GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+                child: Stack(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 28),
+                      child: SingleChildScrollView(
+                        child: Container(
+                          padding:
+                              const EdgeInsets.only(top: 8, left: 4, right: 4),
+                          child: Storage.products.length != 0
+                              ? LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    visproducts = allproducts.where((e) {
+                                      if (e['name']
+                                          .toLowerCase()
+                                          .contains(search)) {
+                                        if (filterCats.length == 0) {
+                                          return true;
+                                        } else {
+                                          return filterCats
+                                              .contains(e['category']);
+                                        }
+                                      } else {
+                                        return false;
+                                      }
+                                    }).toList();
+                                    switch (sort) {
+                                      case 0:
+                                        visproducts.sort((a, b) =>
+                                            categories.indexOf(a['category']) -
+                                            categories.indexOf(b['category']));
+                                        break;
+                                      case 1:
+                                        visproducts.sort((a, b) =>
+                                            a['name'].compareTo(b['name']));
+                                        break;
+                                      case 2:
+                                        visproducts.sort((a, b) =>
+                                            b['name'].compareTo(a['name']));
+                                        break;
+                                      case 3:
+                                        visproducts.sort((a, b) {
+                                          if (b['creation']
+                                              .toDate()
+                                              .isBefore(a['creation'].toDate()))
+                                            return -1;
+                                          else
+                                            return 1;
+                                        });
+                                        break;
+                                      case 4:
+                                        visproducts.sort((a, b) {
+                                          if (a['creation']
+                                              .toDate()
+                                              .isBefore(b['creation'].toDate()))
+                                            return -1;
+                                          else
+                                            return 1;
+                                        });
+                                        break;
+                                    }
+                                    if (visproducts.length != 0) {
+                                      if (constraints.maxWidth <= 600) {
+                                        return GridView.count(
+                                          physics: BouncingScrollPhysics(),
+                                          crossAxisCount: 2,
+                                          shrinkWrap: true,
+                                          childAspectRatio: 0.72,
+                                          children: List.generate(
+                                              visproducts.length, (index) {
+                                            return ProductCard(
+                                              hw: false,
+                                              snap: visproducts[index],
+                                            );
+                                          }),
+                                        );
+                                      } else {
+                                        return GridView.count(
+                                          physics: BouncingScrollPhysics(),
+                                          crossAxisCount: 4,
+                                          shrinkWrap: true,
+                                          childAspectRatio: 0.68,
+                                          children: List.generate(
+                                              visproducts.length, (index) {
+                                            return ProductCard(
+                                              snap: visproducts[index],
+                                              hw: false,
+                                            );
+                                          }),
+                                        );
+                                      }
+                                    } else {
+                                      return Center(
+                                          child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 32),
+                                        child: Text('No Products'),
+                                      ));
+                                    }
+                                  },
+                                )
+                              : Center(
                                   child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 32),
-                                child: Text('No Products'),
-                              ));
-                            }
-                          },
-                        )
-                      : Center(
-                          child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 32),
-                          child: Text('No Products'),
-                        )),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 32),
+                                  child: Text('No Products'),
+                                )),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: AlignmentDirectional.topCenter,
+                      child: Container(
+                        color: Color(0xffa6e553),
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Row(
+                          children: <Widget>[
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  searching = !searching;
+                                });
+                              },
+                              child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                      color: Colors.black12,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 3,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.search,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      Text(
+                                        'Search',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w800),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    isDismissible: true,
+                                    enableDrag: true,
+                                    backgroundColor: Colors.transparent,
+                                    useRootNavigator: true,
+                                    elevation: 0,
+                                    builder: (c) {
+                                      bool showCats = false;
+                                      return StatefulBuilder(
+                                        builder: (c, setMState) => SafeArea(
+                                          child: Container(
+                                            color: Colors.white,
+                                            padding:
+                                                const EdgeInsets.only(top: 16),
+                                            margin:
+                                                const EdgeInsets.only(top: 32),
+                                            child: Column(
+                                              children: <Widget>[
+                                                Center(
+                                                  child: Container(
+                                                    height: 4,
+                                                    width: 120,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.black,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8)),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      IconButton(
+                                                          icon: Icon(
+                                                              Icons.arrow_back),
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          }),
+                                                      Text(
+                                                        'Filter',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 24,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text(
+                                                          'Done',
+                                                          style: TextStyle(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  Colors.blue),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                Material(
+                                                  child: InkWell(
+                                                    splashColor: Colors.black12,
+                                                    onTap: () {
+                                                      setMState(() {
+                                                        showCats = !showCats;
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 16,
+                                                          horizontal: 8),
+                                                      decoration: BoxDecoration(
+                                                          border: Border.symmetric(
+                                                              vertical: BorderSide(
+                                                                  color: Colors
+                                                                      .black54))),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: <Widget>[
+                                                          Text(
+                                                            'Categories',
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                          ),
+                                                          Icon(Icons
+                                                              .keyboard_arrow_down)
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                if (showCats)
+                                                  Expanded(
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      child: Column(
+                                                        children: List.generate(
+                                                            categories.length,
+                                                            (index) => InkWell(
+                                                                  onTap: () {
+                                                                    if (!filterCats
+                                                                        .contains(
+                                                                            categories[index]))
+                                                                      filterCats.add(
+                                                                          categories[
+                                                                              index]);
+                                                                    else
+                                                                      filterCats
+                                                                          .remove(
+                                                                              categories[index]);
+                                                                    setMState(
+                                                                        () {});
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    child: Row(
+                                                                      children: <
+                                                                          Widget>[
+                                                                        Checkbox(
+                                                                            value:
+                                                                                filterCats.contains(categories[index]),
+                                                                            onChanged: (v) {
+                                                                              if (v)
+                                                                                filterCats.add(categories[index]);
+                                                                              else
+                                                                                filterCats.remove(categories[index]);
+                                                                              setMState(() {});
+                                                                            }),
+                                                                        Text(
+                                                                          categories[
+                                                                              index],
+                                                                          style:
+                                                                              TextStyle(fontSize: 12),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                )),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                if (!showCats)
+                                                  SizedBox(
+                                                    height: 64,
+                                                  )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).whenComplete(() => setState(() {}));
+                              },
+                              child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                      color: Colors.black12,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 3,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.filter_list,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text(
+                                        'Filter',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w800),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    isDismissible: true,
+                                    enableDrag: true,
+                                    backgroundColor: Colors.transparent,
+                                    useRootNavigator: true,
+                                    elevation: 0,
+                                    builder: (c) {
+                                      return StatefulBuilder(
+                                        builder: (c, setMState) => Wrap(
+                                          children: <Widget>[
+                                            Container(
+                                              color: Colors.white,
+                                              padding: const EdgeInsets.only(
+                                                  top: 16),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Center(
+                                                    child: Container(
+                                                      height: 4,
+                                                      width: 120,
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.black,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8)),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: <Widget>[
+                                                        IconButton(
+                                                            icon: Icon(Icons
+                                                                .arrow_back),
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            }),
+                                                        Text(
+                                                          'Sort By',
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: 24,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: Text(
+                                                            'Done',
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                color: Colors
+                                                                    .blue),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    children: List.generate(
+                                                        sortList.length,
+                                                        (index) => ListTile(
+                                                              onTap: () {
+                                                                setMState(() {
+                                                                  sort = index;
+                                                                });
+                                                              },
+                                                              title: Text(
+                                                                sortList[index],
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        12),
+                                                              ),
+                                                              leading: Radio(
+                                                                  value: index,
+                                                                  groupValue:
+                                                                      sort,
+                                                                  onChanged:
+                                                                      (v) {
+                                                                    setMState(
+                                                                        () {
+                                                                      sort = v;
+                                                                    });
+                                                                  }),
+                                                            )),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).whenComplete(() => setState(() {}));
+                              },
+                              child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                      color: Colors.black12,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 3,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.sort,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text(
+                                        'Sort',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w800),
+                                      ),
+                                    ],
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (searching)
+                      Align(
+                        alignment: AlignmentDirectional.bottomCenter,
+                        child: Container(
+                          decoration: BoxDecoration(color: Colors.white),
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Theme(
+                            data: ThemeData(primaryColor: Colors.white),
+                            child: TextField(
+                              onChanged: (v) {
+                                setState(() {
+                                  search = v;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                  suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        search_controller.text = '';
+                                        search = '';
+                                      });
+                                    },
+                                    child: Icon(
+                                      Icons.clear,
+                                      color: search == ''
+                                          ? Colors.white
+                                          : Colors.black,
+                                      size: 16,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide:
+                                          BorderSide(color: Colors.white)),
+                                  hintStyle: TextStyle(
+                                      color: Colors.black54,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 4, horizontal: 8),
+                                  hintText: 'Search',
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: Colors.black54,
+                                  ),
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide:
+                                          BorderSide(color: Colors.black)),
+                                  fillColor: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
       ),
@@ -159,7 +655,6 @@ class _ProductsScreenState extends State<ProductsScreen>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
 /*Column(

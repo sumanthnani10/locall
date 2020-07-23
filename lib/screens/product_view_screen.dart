@@ -2,6 +2,7 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:locall/screens/cart.dart';
 import 'package:locall/storage.dart';
 
 class Product extends StatefulWidget {
@@ -55,6 +56,37 @@ class _ProductState extends State<Product> {
                   ),
                 ),
               ),
+              actions: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FlatButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => Cart(),
+                      ));
+                    },
+                    splashColor: Color(0x66a6e553),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    icon: Icon(
+                      Icons.shopping_basket,
+                      size: 14,
+                    ),
+                    color: Colors.white,
+                    label: Text(
+                      Storage.cart != null
+                          ? Storage.cart.length != 0
+                              ? 'Cart (${Storage.cart.length})'
+                              : 'Cart'
+                          : 'Cart',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                )
+              ],
               backgroundColor: Colors.white,
               flexibleSpace: Container(
                 decoration: BoxDecoration(
@@ -65,7 +97,7 @@ class _ProductState extends State<Product> {
                   dotIncreasedColor: Colors.black,
                   autoplay: false,
                   dotSpacing: 16,
-                  dotPosition: DotPosition.topRight,
+                  dotPosition: DotPosition.bottomLeft,
                   dotIncreaseSize: 1.5,
                   images: <Widget>[
                     Image.network(
@@ -180,9 +212,12 @@ class _ProductState extends State<Product> {
                                       borderRadius: BorderRadius.circular(8)),
                                   color: Color(0xffa6e553),
                                   onPressed: () async {
+                                    showLoadingDialog(
+                                        context, 'Adding to Cart');
                                     await Firestore.instance
                                         .collection('users')
-                                        .document('${Storage.user['customer_id']}')
+                                        .document(
+                                            '${Storage.user['customer_id']}')
                                         .collection('grocery_cart')
                                         .document(
                                             '${widget.product['product_id']}_price${index + 1}')
@@ -192,6 +227,7 @@ class _ProductState extends State<Product> {
                                       'price_num': index + 1,
                                       'quantity': 1,
                                     });
+                                    Navigator.pop(context);
                                     setState(() {});
                                   },
                                   icon: Icon(
@@ -214,9 +250,12 @@ class _ProductState extends State<Product> {
                                                   '${widget.product['product_id']}_price${index + 1}']
                                               ['quantity'] !=
                                           1) {
+                                        showLoadingDialog(
+                                            context, 'Updating Cart');
                                         await Firestore.instance
                                             .collection('users')
-                                            .document('${Storage.user['customer_id']}')
+                                            .document(
+                                                '${Storage.user['customer_id']}')
                                             .collection('grocery_cart')
                                             .document(
                                                 '${widget.product['product_id']}_price${index + 1}')
@@ -226,14 +265,19 @@ class _ProductState extends State<Product> {
                                                   ['quantity'] -
                                               1,
                                         });
+                                        Navigator.pop(context);
                                       } else {
+                                        showLoadingDialog(
+                                            context, 'Removing from Cart');
                                         await Firestore.instance
                                             .collection('users')
-                                            .document('${Storage.user['customer_id']}')
+                                            .document(
+                                                '${Storage.user['customer_id']}')
                                             .collection('grocery_cart')
                                             .document(
                                                 '${widget.product['product_id']}_price${index + 1}')
                                             .delete();
+                                        Navigator.pop(context);
                                       }
                                       setState(() {});
                                     },
@@ -265,9 +309,12 @@ class _ProductState extends State<Product> {
                                   ),
                                   InkWell(
                                     onTap: () async {
+                                      showLoadingDialog(
+                                          context, 'Updating Cart');
                                       await Firestore.instance
                                           .collection('users')
-                                          .document('${Storage.user['customer_id']}')
+                                          .document(
+                                              '${Storage.user['customer_id']}')
                                           .collection('grocery_cart')
                                           .document(
                                               '${widget.product['product_id']}_price${index + 1}')
@@ -277,6 +324,7 @@ class _ProductState extends State<Product> {
                                                 ['quantity'] +
                                             1,
                                       });
+                                      Navigator.pop(context);
                                       setState(() {});
                                     },
                                     child: Container(
@@ -331,6 +379,36 @@ class _ProductState extends State<Product> {
           ],
         ),
       ),
+    );
+  }
+
+  showLoadingDialog(BuildContext context, String title) {
+    // show the dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          contentPadding: const EdgeInsets.all(8),
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(title)
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

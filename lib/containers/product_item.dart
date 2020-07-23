@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:locall/containers/focused_menu.dart';
 import 'package:locall/screens/product_view_screen.dart';
 import 'package:locall/storage.dart';
 
@@ -313,7 +312,19 @@ class _ProductItemState extends State<ProductItem>
                           bottomLeft: Radius.circular(8),
                           bottomRight: Radius.circular(8))),
                   color: Color(0xffa6e553),
-                  onPressed: () {},
+                  onPressed: () async {
+                    await Firestore.instance
+                        .collection('users')
+                        .document('${Storage.user['customer_id']}')
+                        .collection('grocery_cart')
+                        .document('${widget.snap['product_id']}_price1')
+                        .setData({
+                      'product_id': widget.snap['product_id'],
+                      'price_num': 1,
+                      'quantity': 1,
+                    });
+                    setState(() {});
+                  },
                   icon: Icon(Icons.shopping_basket),
                   label: Text('Add to cart')),
             ),

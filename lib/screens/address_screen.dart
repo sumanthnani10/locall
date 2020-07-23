@@ -53,6 +53,7 @@ class _AddressScreenState extends State<AddressScreen> {
         onDragEnd: (newPos) {
           moveCamera(newPos);
         });
+    super.initState();
   }
 
   Future<void> getCurrentLocation() async {
@@ -244,7 +245,7 @@ class _AddressScreenState extends State<AddressScreen> {
                     };
                     await Firestore.instance.collection('orders').add({}).then(
                         (value) async =>
-                            order['order_id'] = await value.documentID);
+                            order['order_id'] = value.documentID);
                     await Firestore.instance
                         .collection('orders')
                         .document(order['order_id'])

@@ -1,33 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:locall/containers/focused_menu.dart';
-import 'package:locall/containers/product_item.dart';
 import 'package:locall/containers/title_text.dart';
-
-import 'bottom_nav.dart';
 
 class CategoryScreen extends StatefulWidget {
   String category;
   List<dynamic> products;
 
-  CategoryScreen(@required this.category, {@required this.products});
+  CategoryScreen(this.category, {@required this.products});
 
   @override
   _CategoryScreenState createState() => _CategoryScreenState();
 }
 
-class _CategoryScreenState extends State<CategoryScreen>
-    with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-
+class _CategoryScreenState extends State<CategoryScreen> {
   @override
   void initState() {
-    _controller = AnimationController(vsync: this);
     super.initState();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
@@ -39,6 +31,8 @@ class _CategoryScreenState extends State<CategoryScreen>
         child: TitleText(
           widget.category,
           cart: false,
+          back: true,
+          textSize: 20,
         ),
       ),
       backgroundColor: Color(0xffa6e553),

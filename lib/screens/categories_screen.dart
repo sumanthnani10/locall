@@ -84,12 +84,37 @@ class _CategoriesScreenState extends State<CategoriesScreen>
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text(
-                              categories[i],
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  categories[i],
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                if (categories[i] != categories[0])
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(createRoute(
+                                          CategoryScreen(categories[i],
+                                              products: List.from(Storage
+                                                  .products
+                                                  .where((element) {
+                                        return element['category'] ==
+                                            categories[i];
+                                      })))));
+                                    },
+                                    child: Text(
+                                      'More',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.indigo,
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                           SingleChildScrollView(
@@ -179,7 +204,6 @@ class _CategoriesScreenState extends State<CategoriesScreen>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
 
