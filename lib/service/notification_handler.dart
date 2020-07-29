@@ -27,38 +27,38 @@ class NotificationHandler {
   Future<String> init(context) async {
     if (!initialized) {
       fcm.requestNotificationPermissions();
-      fcm.configure(onMessage: (message) async {
-        int c = 0;
-        switch (message['data']['stage']) {
-          case 'Accepted':
-            c = 1;
-            break;
-          case 'Packed':
-            c = 2;
-            break;
-          case 'Delivered':
-            c = 3;
-            break;
-          case 'Rejected':
-            c = 4;
-            break;
-        }
-        ;
-        showSimpleNotification(
-          Text(
-            message['notification']['body'],
-          ),
-          autoDismiss: true,
-          background: colors[c],
-          foreground: Colors.black,
-          duration: Duration(seconds: 5),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
-          position: NotificationPosition.bottom,
-        );
-      }, onResume: (message) async {
-        debugPrint(message['data']['stage']);
-      });
+      fcm.configure(
+          onMessage: (message) async {
+            int c = 0;
+            switch (message['data']['stage']) {
+              case 'Accepted':
+                c = 1;
+                break;
+              case 'Packed':
+                c = 2;
+                break;
+              case 'Delivered':
+                c = 3;
+                break;
+              case 'Rejected':
+                c = 4;
+                break;
+            }
+            ;
+            showSimpleNotification(
+              Text(
+                message['notification']['body'],
+              ),
+              autoDismiss: true,
+              background: colors[c],
+              foreground: Colors.black,
+              duration: Duration(seconds: 5),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+              position: NotificationPosition.bottom,
+            );
+          },
+          onResume: (message) async {});
 
       // For testing purposes print the Firebase Messaging token
       token = await fcm.getToken();

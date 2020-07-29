@@ -328,7 +328,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
     if (custLoc != null) {
       moveToLocation(custLoc);
     } else {
-      print(await Geolocator().checkGeolocationPermissionStatus());
+      await Geolocator().checkGeolocationPermissionStatus();
       if (!await Geolocator().isLocationServiceEnabled()) {
         showDialog(
             context: context,

@@ -68,7 +68,6 @@ class _SplashScreenState extends State<SplashScreen> {
               .get()
               .then((value) {
             Storage.area_details = value.data;
-            //print(value.data);
           });
           await Firestore.instance
               .collection('locations')
@@ -99,16 +98,41 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.white,
+        color: /*Color(0xffffaf00)*/ Colors.white,
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
+              /*Text(
                 'Avashyaa',
-                style: TextStyle(color: Color(0xff34ca08), fontSize: 64),
+                style: TextStyle(color: Colors.white, fontSize: 64),
+              ),*/
+              Spacer(),
+              Container(
+                height: 300,
+                child: Image.asset(
+                  'assets/logo/logo rev.png',
+                  width: 300,
+                ),
               ),
-              Container(width: 150, child: LinearProgressIndicator())
+              SizedBox(
+                height: 16,
+              ),
+              Container(
+                  width: 200,
+                  child: LinearProgressIndicator(
+                    backgroundColor: Colors.white,
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xffffaf00)),
+                  )),
+              Spacer(),
+              Image.asset(
+                'assets/logo/ftd_logo.png',
+                width: 100,
+              ),
+              SizedBox(
+                height: 8,
+              )
             ],
           ),
         ),
