@@ -328,38 +328,34 @@ class _UserDetailsInputState extends State<UserDetailsInput>
     if (custLoc != null) {
       moveToLocation(custLoc);
     } else {
-      if (await Geolocator().checkGeolocationPermissionStatus() ==
-          GeolocationStatus.granted) {
-        if (!await Geolocator().isLocationServiceEnabled()) {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text("Turn on Location"),
-                  content: const Text(
-                      'Please make sure you enable Location and try again'),
-                  actions: <Widget>[
-                    FlatButton(
-                        child: Text('Ok'),
-                        onPressed: () async {
-                          final AndroidIntent intent = AndroidIntent(
-                              action:
-                                  'android.settings.LOCATION_SOURCE_SETTINGS');
-                          intent.launch();
-                          Navigator.of(context, rootNavigator: true).pop();
-                        })
-                  ],
-                );
-              });
-        } else {
-          position = await Geolocator().getCurrentPosition(
-              desiredAccuracy: LocationAccuracy.high,
-              locationPermissionLevel: GeolocationPermission.locationWhenInUse);
-          custLoc = new LatLng(position.latitude, position.longitude);
-          moveToLocation(new LatLng(position.latitude, position.longitude));
-        }
+      print(await Geolocator().checkGeolocationPermissionStatus());
+      if (!await Geolocator().isLocationServiceEnabled()) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Turn on Location"),
+                content: const Text(
+                    'Please make sure you enable Location and try again'),
+                actions: <Widget>[
+                  FlatButton(
+                      child: Text('Ok'),
+                      onPressed: () async {
+                        final AndroidIntent intent = AndroidIntent(
+                            action:
+                                'android.settings.LOCATION_SOURCE_SETTINGS');
+                        intent.launch();
+                        Navigator.of(context, rootNavigator: true).pop();
+                      })
+                ],
+              );
+            });
       } else {
-        getCurrentLocation();
+        position = await Geolocator().getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high,
+            locationPermissionLevel: GeolocationPermission.locationWhenInUse);
+        custLoc = new LatLng(position.latitude, position.longitude);
+        moveToLocation(new LatLng(position.latitude, position.longitude));
       }
     }
   }

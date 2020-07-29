@@ -40,24 +40,24 @@ class ProductCard extends StatefulWidget {
 class _ProductCardState extends State<ProductCard>
     with SingleTickerProviderStateMixin {
   Map<String, dynamic> variants = new Map<String, dynamic>();
-  AnimationController _controller;
-  Animation<double> animation;
+/*  AnimationController _controller;
+  Animation<double> animation;*/
 
   Widget child;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 500) /*, value: 0.1*/);
+    /*_controller = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 500) */ /*, value: 0.1*/ /*);
     animation = CurvedAnimation(
         parent: _controller, curve: Curves.fastLinearToSlowEaseIn);
-    _controller.forward();
+    _controller.forward();*/
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+//    _controller.dispose();
     super.dispose();
   }
 
@@ -435,14 +435,11 @@ class _ProductCardState extends State<ProductCard>
                 builder: (context) => Product(product: widget.snap),
               ));
             },
-            child: ScaleTransition(
-              scale: animation,
-              child: Container(
-                padding: const EdgeInsets.only(bottom: 2),
-                width: 160,
-                height: 236,
-                child: card(),
-              ),
+            child: Container(
+              padding: const EdgeInsets.only(bottom: 2),
+              width: 160,
+              height: 236,
+              child: card(),
             ),
           )
         : InkWell(
@@ -451,11 +448,8 @@ class _ProductCardState extends State<ProductCard>
                 builder: (context) => Product(product: widget.snap.data),
               ));
             },
-            child: ScaleTransition(
-              scale: animation,
-              child: Container(
-                child: card(),
-              ),
+            child: Container(
+              child: card(),
             ),
           );
     return GestureDetector(key: containerKey, child: child);
