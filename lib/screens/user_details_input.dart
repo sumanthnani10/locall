@@ -315,10 +315,10 @@ class _UserDetailsInputState extends State<UserDetailsInput>
           .getDetailsByPlaceId(p.placeId);
       custLoc = new LatLng(detailsResponse.result.geometry.location.lat,
           detailsResponse.result.geometry.location.lng);
-      setState(() {
+      /*setState(() {
         custAddress = p.description;
         addressc.text = custAddress;
-      });
+      });*/
       moveToLocation(new LatLng(detailsResponse.result.geometry.location.lat,
           detailsResponse.result.geometry.location.lng));
     }
@@ -363,9 +363,9 @@ class _UserDetailsInputState extends State<UserDetailsInput>
   moveCamera(LatLng latLng) async {
     map.animateCamera(CameraUpdate.newCameraPosition(
         new CameraPosition(target: latLng, zoom: 15)));
-    List<Placemark> placemark = await Geolocator()
-        .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
-    setAddress(placemark.elementAt(0));
+    /*List<Placemark> placemark = await Geolocator()
+        .placemarkFromCoordinates(latLng.latitude, latLng.longitude);*/
+//    setAddress(placemark.elementAt(0));
     custLoc = latLng;
     setState(() {});
   }
@@ -386,9 +386,9 @@ class _UserDetailsInputState extends State<UserDetailsInput>
     }
     map.moveCamera(CameraUpdate.newCameraPosition(
         new CameraPosition(target: latLng, zoom: 15)));
-    List<Placemark> placemark = await Geolocator()
-        .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
-    setAddress(placemark.elementAt(0));
+    /*List<Placemark> placemark = await Geolocator()
+        .placemarkFromCoordinates(latLng.latitude, latLng.longitude);*/
+//    setAddress(placemark.elementAt(0));
     deliverable.value = false;
     double dt;
     areas.forEach((element) async {
@@ -402,7 +402,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
     });
   }
 
-  setAddress(placemark) {
+  /*setAddress(placemark) {
 //    print(placemark.toJson());
     custAddress = '';
     if (placemark.name != '') {
@@ -430,7 +430,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
       custAddress += '${placemark.postalCode},';
     }
     addressc.text = custAddress;
-  }
+  }*/
 
   showLoadingDialog(BuildContext context, String title) {
     // show the dialog
