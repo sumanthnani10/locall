@@ -248,7 +248,7 @@ class _BottomNavBarState extends State<BottomNavBar>
       bottomNavigationBar: PersistentBottomNavBar(
         navBarHeight: 64,
         showElevation: true,
-        navBarStyle: NavBarStyle.style1,
+        navBarStyle: NavBarStyle.style3,
         selectedIndex: sel,
         backgroundColor: Colors.white,
         popScreensOnTapOfSelectedTab: false,

@@ -583,6 +583,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                           child: Theme(
                             data: ThemeData(primaryColor: Colors.white),
                             child: TextField(
+                              autofocus: true,
                               onChanged: (v) {
                                 setState(() {
                                   search = v;

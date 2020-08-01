@@ -63,7 +63,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
         actions: <Widget>[
           FlatButton(
             onPressed: () async {
-              if (fname != '' && lname != '' && custAddress != '') {
+              if (fname != '' && custAddress != '') {
                 if (deliverable.value) {
                   showLoadingDialog(context, 'Uploading');
                   String t = await NotificationHandler.instance.init(context);
@@ -175,8 +175,8 @@ class _UserDetailsInputState extends State<UserDetailsInput>
                                     borderSide: BorderSide(
                                         color: Colors.black54, width: 2),
                                     borderRadius: BorderRadius.circular(48)),
-                                hintText: "Last Name *",
-                                labelText: 'Last Name *'),
+                                hintText: "Last Name",
+                                labelText: 'Last Name'),
                           ),
                         ),
                         ValueListenableBuilder(
@@ -246,7 +246,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
                                     },
                                     child: Container(
                                         decoration: BoxDecoration(
-                                            color: Colors.white,
+                                            color: Colors.black,
                                             borderRadius:
                                                 BorderRadius.circular(4)),
                                         padding: const EdgeInsets.all(4),
@@ -254,6 +254,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
                                           'Search',
                                           style: TextStyle(
                                               fontSize: 14,
+                                              color: Colors.white,
                                               fontWeight: FontWeight.w800),
                                         )),
                                   ))
@@ -316,8 +317,8 @@ class _UserDetailsInputState extends State<UserDetailsInput>
       custLoc = new LatLng(detailsResponse.result.geometry.location.lat,
           detailsResponse.result.geometry.location.lng);
       setState(() {
-        custAddress = p.description;
-        addressc.text = custAddress;
+        /*custAddress = p.description;
+        addressc.text = custAddress;*/
       });
       moveToLocation(new LatLng(detailsResponse.result.geometry.location.lat,
           detailsResponse.result.geometry.location.lng));
@@ -365,7 +366,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
         new CameraPosition(target: latLng, zoom: 15)));
     List<Placemark> placemark = await Geolocator()
         .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
-    setAddress(placemark.elementAt(0));
+//    setAddress(placemark.elementAt(0));
     custLoc = latLng;
     setState(() {});
   }
@@ -388,7 +389,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
         new CameraPosition(target: latLng, zoom: 15)));
     List<Placemark> placemark = await Geolocator()
         .placemarkFromCoordinates(latLng.latitude, latLng.longitude);
-    setAddress(placemark.elementAt(0));
+//    setAddress(placemark.elementAt(0));
     deliverable.value = false;
     double dt;
     areas.forEach((element) async {
@@ -402,7 +403,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
     });
   }
 
-  setAddress(placemark) {
+  /*setAddress(placemark) {
 //    print(placemark.toJson());
     custAddress = '';
     if (placemark.name != '') {
@@ -430,7 +431,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
       custAddress += '${placemark.postalCode},';
     }
     addressc.text = custAddress;
-  }
+  }*/
 
   showLoadingDialog(BuildContext context, String title) {
     // show the dialog
