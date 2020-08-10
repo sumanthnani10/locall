@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:locall/screens/grocery_orders.dart';
 import 'package:locall/screens/login.dart';
 import 'package:locall/storage.dart';
-import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:share/share.dart';
+//import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -127,6 +128,24 @@ class _ProfileState extends State<Profile> {
                             Border(bottom: BorderSide(color: Colors.black26))),
                     child: Text(
                       'Sign Out',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Share.share('Check Out this app.\nbit.ly/avashyaa');
+                  },
+                  child: Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border:
+                            Border(bottom: BorderSide(color: Colors.black26))),
+                    child: Text(
+                      'Share',
                       style: TextStyle(fontSize: 20),
                     ),
                   ),

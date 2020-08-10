@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:locall/screens/cart.dart';
 import 'package:locall/storage.dart';
-import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+//import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class TitleText extends StatelessWidget {
   String title;

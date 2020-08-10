@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -219,20 +221,31 @@ class _BottomNavBarState extends State<BottomNavBar>
                       style: TextStyle(fontSize: 18),
                     ),
                     Spacer(),
-                    FaIcon(
-                      FontAwesomeIcons.mobileAlt,
-                      size: 16,
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
                     InkWell(
-                      onTap: () {
+                      onTap: (){
                         tabController.animateTo(1);
                       },
-                      child: Text(
-                        'Go to Store',
-                        style: TextStyle(fontSize: 18),
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8)
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            FaIcon(
+                              FontAwesomeIcons.mobileAlt,
+                              size: 16,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              'Go to Store',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -247,8 +260,9 @@ class _BottomNavBarState extends State<BottomNavBar>
       ),
       bottomNavigationBar: PersistentBottomNavBar(
         navBarHeight: 64,
-        showElevation: true,
-        navBarStyle: NavBarStyle.style3,
+//        showElevation: true,
+        navBarStyle: NavBarStyle.style6,
+        decoration: NavBarDecoration(),
         selectedIndex: sel,
         backgroundColor: Colors.white,
         popScreensOnTapOfSelectedTab: false,
@@ -298,7 +312,7 @@ class _BottomNavBarState extends State<BottomNavBar>
             inactiveColor: Colors.orange,
           ),
         ],
-      ),
+      )
     );
   }
 

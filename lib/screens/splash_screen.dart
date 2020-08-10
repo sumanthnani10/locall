@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:locall/screens/bottom_nav.dart';
 import 'package:locall/screens/login.dart';
 import 'package:locall/screens/user_details_input.dart';
+import 'package:locall/service/notification_handler.dart';
 import 'package:locall/storage.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -85,6 +86,14 @@ class _SplashScreenState extends State<SplashScreen> {
               return categories.indexOf(a['category']) -
                   categories.indexOf(b['category']);
             });
+          });
+          String ntoken =
+          await NotificationHandler.instance.init(context);
+          await Firestore.instance
+              .collection('users')
+              .document(uid)
+              .updateData({
+            'notification_id': ntoken,
           });
           Navigator.of(context).pushReplacement(createRoute(BottomNavBar()));
         }

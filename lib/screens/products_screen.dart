@@ -1,9 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 import 'package:locall/containers/focused_menu.dart';
-import 'package:locall/containers/product_item.dart';
-import 'package:locall/containers/title_text.dart';
-import 'package:locall/screens/category_screen.dart';
 import 'package:locall/storage.dart';
 
 class ProductsScreen extends StatefulWidget {
@@ -53,10 +51,27 @@ class _ProductsScreenState extends State<ProductsScreen>
   TextEditingController search_controller = new TextEditingController();
   bool searching = false;
 
+  ScrollController scrollController = new ScrollController();
+  int viewItems = 20;
+
   @override
   void initState() {
+    scrollController.addListener(() {
+      if (scrollController.offset >=
+              scrollController.position.maxScrollExtent &&
+          !scrollController.position.outOfRange) {
+        viewItems+=20;
+        setState(() {});
+      }
+    });
     allproducts = Storage.products.sublist(0);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -80,6 +95,7 @@ class _ProductsScreenState extends State<ProductsScreen>
                     Padding(
                       padding: const EdgeInsets.only(top: 28),
                       child: SingleChildScrollView(
+                        controller: scrollController,
                         child: Container(
                           padding:
                               const EdgeInsets.only(top: 8, left: 4, right: 4),
@@ -142,13 +158,16 @@ class _ProductsScreenState extends State<ProductsScreen>
                                           crossAxisCount: 2,
                                           shrinkWrap: true,
                                           childAspectRatio: 0.72,
-                                          children: List.generate(
-                                              visproducts.length, (index) {
+                                          children:
+                                              List<Widget>.generate(min<int>(viewItems, visproducts.length), (index) {
                                             return ProductCard(
                                               hw: false,
                                               snap: visproducts[index],
                                             );
-                                          }),
+                                          })+[Padding(
+                                                padding: const EdgeInsets.all(16.0),
+                                                child: Center(child: Text(search!=''?'':viewItems==visproducts.length?'____':'Loading....')),
+                                              )],
                                         );
                                       } else {
                                         return GridView.count(
@@ -156,13 +175,16 @@ class _ProductsScreenState extends State<ProductsScreen>
                                           crossAxisCount: 4,
                                           shrinkWrap: true,
                                           childAspectRatio: 0.68,
-                                          children: List.generate(
-                                              visproducts.length, (index) {
+                                          children:
+                                              List<Widget>.generate(min<int>(viewItems, visproducts.length), (index) {
                                             return ProductCard(
                                               snap: visproducts[index],
                                               hw: false,
                                             );
-                                          }),
+                                          })+[Padding(
+                                                padding: const EdgeInsets.all(16.0),
+                                                child: Center(child: Text(search!=''?'':viewItems==visproducts.length?'____':'Loading....')),
+                                              )],
                                         );
                                       }
                                     } else {

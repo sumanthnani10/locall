@@ -23,6 +23,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
     with AutomaticKeepAliveClientMixin {
   TextEditingController fname_controller = new TextEditingController();
   TextEditingController lname_controller = new TextEditingController();
+  TextEditingController landmark_controller = new TextEditingController();
   String fname = '', lname = '', location = '';
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController addressc = new TextEditingController();
@@ -38,9 +39,12 @@ class _UserDetailsInputState extends State<UserDetailsInput>
   int c = 0;
   ValueNotifier<bool> deliverable = ValueNotifier<bool>(false);
 
+  String landmark='';
+
   @override
   void initState() {
     custLoc = null;
+    custAddress='';
     areas.add({'area': 'Isnapur', 'lat': 17.544466, 'long': 78.212255});
     custMarker = Marker(
         markerId: MarkerId("Customer"),
@@ -63,7 +67,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
         actions: <Widget>[
           FlatButton(
             onPressed: () async {
-              if (fname != '' && custAddress != '') {
+              if (fname != '' && custAddress != '' && landmark!='') {
                 if (deliverable.value) {
                   showLoadingDialog(context, 'Uploading');
                   String t = await NotificationHandler.instance.init(context);
@@ -77,7 +81,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
                     'grocery': {
                       'area': location,
                       'distance': distance,
-                      'address': custAddress,
+                      'address': custAddress+', near $landmark',
                       'location': {
                         'lat': custLoc.latitude,
                         'long': custLoc.longitude,
@@ -274,7 +278,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
                           width: 330,
                           child: TextField(
                             onChanged: (v) {
@@ -284,7 +288,7 @@ class _UserDetailsInputState extends State<UserDetailsInput>
                             controller: addressc,
                             textCapitalization: TextCapitalization.words,
                             textInputAction: TextInputAction.done,
-                            maxLines: 6,
+                            maxLines: 4,
                             decoration: InputDecoration(
                                 fillColor: Colors.white70,
                                 filled: true,
@@ -294,6 +298,29 @@ class _UserDetailsInputState extends State<UserDetailsInput>
                                         color: Colors.black, width: 2),
                                     borderRadius: BorderRadius.circular(8)),
                                 labelText: 'Address *'),
+                          ),
+                        ),
+                        Container(
+                          width: 330,
+                          child: TextField(
+                            onChanged: (v) {
+                              landmark = v;
+                            },
+                            controller: landmark_controller,
+                            keyboardType: TextInputType.text,
+                            textCapitalization: TextCapitalization.words,
+                            maxLines: 1,
+                            decoration: InputDecoration(
+                                fillColor: Colors.white70,
+                                filled: true,
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 16),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black54, width: 2),
+                                    borderRadius: BorderRadius.circular(8)),
+                                hintText: "Landmark *",
+                                labelText: 'Landmark *'),
                           ),
                         ),
                       ],

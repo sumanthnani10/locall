@@ -61,7 +61,7 @@ class _CartState extends State<Cart> {
                         }
                         mrp = ml.fold(0, (p, c) => p + c);
                         total = tl.fold(0, (p, c) => p + c);
-                        if (total >= 1500) {
+                        if (total >= 1000) {
                           delivery = 0;
                         } else {
                           if (Storage.user['grocery']['distance'] <= 1000) {
@@ -412,23 +412,16 @@ class _CartState extends State<Cart> {
                               .document(e.documentID)
                               .delete();
                         });
-//                    order['time']['order_placed'] = Timestamp.now();
-                        await NotificationHandler.instance.sendMessage(
-                            'New Order',
-                            "You got a new Order.",
-                            Storage.area_details['groceries']
-                                ['notification_token']);
+                        Storage.area_details['groceries']['notification_token'].forEach((e) async {
+                          await NotificationHandler.instance.sendMessage(
+                              'New Order',
+                              "You got a new Order.",
+                              e);
+                        });
                         Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.of(context)
-                            .push(createRoute(GroceryOrder(order)));
-
-                        /*Navigator.push(
-                            context,
-                            createRoute(AddressScreen(
-                                total: total,
-                                mrp: mrp,
-                                saved: (((mrp - total) / mrp) * 100).round())));*/
+                            .pushReplacement(createRoute(GroceryOrder(order)));
                       },
                       icon: Icon(
                         Icons.done_all,

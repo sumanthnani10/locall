@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:locall/screens/login.dart';
 import 'package:locall/screens/splash_screen.dart';
+import 'package:locall/service/notification_handler.dart';
+import 'package:locall/storage.dart';
 
 class OtpScreen extends StatefulWidget {
   String phoneNumber;
@@ -102,10 +106,10 @@ class _OtpScreenState extends State<OtpScreen>
                       FirebaseAuth.instance
                           .signInWithCredential(credential)
                           .then((value) async {
-                        Navigator.pop(context);
-                        Navigator.pop(context); /**/
-                        Navigator.pushReplacement(
-                            context, createRoute(SplashScreen()));
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            createRoute(SplashScreen()),
+                            (route) => route.isFirst);
                       }).catchError(() {
                         Navigator.pop(context);
                         showAlertDialog(context, 'Sign In Failed',
